@@ -1,7 +1,6 @@
 from django.db import models
 
 # Create your models here.
-
 class Client(models.Model):
     client_id = models.CharField(max_length=50, primary_key=True)
     firstname = models.CharField(max_length=50)
@@ -14,7 +13,7 @@ class Client(models.Model):
     nominee = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.name
+        return self.firstname + " " + self.lastname
 
 class BankAccount(models.Model):
     account_no = models.CharField(max_length=50, primary_key=True)
