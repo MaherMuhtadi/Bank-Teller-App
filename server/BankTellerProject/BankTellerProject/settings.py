@@ -37,9 +37,16 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
+    "corsheaders",
+    # "AccountApp.apps.AccountappConfig",
+    "AccountApp",
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True  # added for CORS support
+
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",  # added for CORS support
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -77,6 +84,12 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+        # "ENGINE": "djongo",
+        # "CLIENT": {
+        #     "host": "mongodb+srv://admin:admin@bankteller.vrhbn.mongodb.net/?retryWrites=true&w=majority&appName=BankTeller",
+        #     "name":"bankTellerDatabase",
+        #     "authMechanism": "SCRAM-SHA-1",
+        # }
     }
 }
 
