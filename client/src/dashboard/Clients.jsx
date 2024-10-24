@@ -16,14 +16,14 @@ function Clients() {
                     </a>
                 </li>
                 <li>
-                    <a href="new_account">
+                    <a href="client_registration">
                         <figure className="text-center hover:underline">
                             <img
                                 className="w-24 h-24 bg-slate-300 rounded-full p-3"
-                                src="/new-account.svg"
-                                alt="New Account Icon"
+                                src="/client-registration.svg"
+                                alt="Client Registration Icon"
                             />
-                            <figcaption>New Account</figcaption>
+                            <figcaption>Registration</figcaption>
                         </figure>
                     </a>
                 </li>

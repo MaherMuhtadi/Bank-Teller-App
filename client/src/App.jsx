@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NavBar from "./NavBar";
-import Dashboard from "./dashboard/Dashboard";
+import Dashboard from "./Dashboard/Dashboard";
+import ClientRegistration from "./ClientRegistration/ClientRegistration";
 
 const router = createBrowserRouter([
     {
@@ -24,8 +25,8 @@ const router = createBrowserRouter([
         element: <Dashboard />,
     },
     {
-        path: "new_account",
-        element: <Dashboard />,
+        path: "client_registration",
+        element: <ClientRegistration />,
     },
     {
         path: "transfer",
