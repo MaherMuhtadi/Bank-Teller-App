@@ -134,3 +134,37 @@ def depositMoney(request):
         return JsonResponse(response_data, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+@csrf_exempt
+def withdrawMoney(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        account_no = data.get('account_no')
+        amount = data.get('amount')
+
+        # Check if the account exists
+        try:
+            account = BankAccount.objects.get(account_no=account_no)
+        except BankAccount.DoesNotExist:
+            return JsonResponse({'error': 'Account does not exist'}, status=404)
+
+        # Check if the account has sufficient balance
+        if account.balance < amount:
+            return JsonResponse({'error': 'Insufficient balance'}, status=400)
+
+        # Deduct the amount from the account balance
+        account.balance -= amount
+
+        # Save the updated account balance
+        account.save()
+
+        # Return a JSON response with the updated balance
+        response_data = {
+            'account_no': account_no,
+            'updated_balance': account.balance
+        }
+
+        return JsonResponse(response_data, status=200)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
