@@ -105,6 +105,12 @@ def create_newAccount(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
+def calculate_balance_after_transaction(current_balance, amount, transaction_type):
+    if transaction_type=='credit':
+        return current_balance + amount
+    elif transaction_type=='debit':
+        return current_balance - amount
+
 @csrf_exempt
 def depositMoney(request):
     if request.method == 'POST':
@@ -120,7 +126,8 @@ def depositMoney(request):
             return JsonResponse({'error': 'Account does not exist'}, status=404)
 
         # Add the amount to the account balance
-        account.balance += amount
+        account.balance = calculate_balance_after_transaction(current_balance=account.balance, amount=amount,
+                                                              transaction_type='credit')
 
         # Save the updated account balance
         account.save()
@@ -155,7 +162,8 @@ def withdrawMoney(request):
             return JsonResponse({'error': 'Insufficient balance'}, status=400)
 
         # Deduct the amount from the account balance
-        account.balance -= amount
+        account.balance = calculate_balance_after_transaction(current_balance=account.balance, amount=amount,
+                                                              transaction_type='debit')
 
         # Save the updated account balance
         account.save()
