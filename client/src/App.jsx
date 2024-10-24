@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NavBar from "./NavBar";
 import Dashboard from "./Dashboard/Dashboard";
 import ClientRegistration from "./ClientRegistration/ClientRegistration";
+import ClientInfo from "./ClientInfo/ClientInfo";
 
 const router = createBrowserRouter([
     {
@@ -22,7 +23,7 @@ const router = createBrowserRouter([
     },
     {
         path: "client_info",
-        element: <Dashboard />,
+        element: <ClientInfo />,
     },
     {
         path: "client_registration",
