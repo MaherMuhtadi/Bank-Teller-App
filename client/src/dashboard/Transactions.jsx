@@ -5,24 +5,20 @@ function Transactions() {
             <ul className="flex justify-between">
                 <li>
                     <a href="transfer">
-                        <figure className="text-center hover:underline">
-                            <img
-                                className="w-24 h-24 bg-lime-100 rounded-full p-3"
-                                src="/transfer.svg"
-                                alt="Transfer Icon"
-                            />
+                        <figure className="text-center hover:underline hover:scale-90 transition-transform">
+                            <div className="w-24 h-24 bg-lime-100 rounded-full p-3 flex justify-center items-center">
+                                <img src="/transfer.svg" alt="Transfer Icon" />
+                            </div>
                             <figcaption>Transfer</figcaption>
                         </figure>
                     </a>
                 </li>
                 <li>
                     <a href="cash">
-                        <figure className="text-center hover:underline">
-                            <img
-                                className="w-24 h-24 bg-lime-100 rounded-full p-3"
-                                src="/cash.svg"
-                                alt="Cash Icon"
-                            />
+                        <figure className="text-center hover:underline hover:scale-90 transition-transform">
+                            <div className="w-24 h-24 bg-lime-100 rounded-full p-3 flex justify-center items-center">
+                                <img src="/cash.svg" alt="Cash Icon" />
+                            </div>
                             <figcaption>Cash</figcaption>
                         </figure>
                     </a>

@@ -43,10 +43,7 @@ function NewClient() {
     };
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            className="flex flex-col space-y-5 min-w-fit"
-        >
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-5 w-fit">
             <h2 className="font-bold text-center">New Client</h2>
 
             <div className="flex space-x-6">
