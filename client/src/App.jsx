@@ -22,6 +22,14 @@ const router = createBrowserRouter([
         element: <Dashboard />,
     },
     {
+        path: "/sign_in",
+        element: <Dashboard />,
+    },
+    {
+        path: "profile",
+        element: <Dashboard />,
+    },
+    {
         path: "client_info",
         element: <ClientInfo />,
     },
@@ -44,10 +52,14 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+    document.body.className =
+        "bg-gradient-to-l from-neutral-100/95 to-emerald-100/95";
     return (
-        <div className="bg-gradient-to-l from-neutral-100/95 to-emerald-100/95 min-h-screen">
+        <div className="h-screen flex flex-col">
             <NavBar />
-            <RouterProvider router={router} />
+            <div className="flex-grow">
+                <RouterProvider router={router} />
+            </div>
         </div>
     );
 }
