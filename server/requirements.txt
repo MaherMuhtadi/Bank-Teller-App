@@ -1,6 +1,5 @@
 django
 djangorestframework
 django-cors-headers
-djong
 dnspython
 pytest
