@@ -15,3 +15,28 @@ A tool for bank employees to manage customer accounts and cards, conduct transac
 -   **Frontend:**
     -   ReactJS (Client)
     -   Tailwind
+
+## Installation
+
+### Frontend
+
+**Prerequisites:**
+
+Check if Node.js and npm are installed.
+
+```
+$ node -v
+$ npm -v
+```
+
+**Installation:**
+
+To install and run the frontend of the app for development, go to the _client_ directory, install the dependencies and then start the development server on your local device.
+
+```
+$ cd client
+$ npm install
+$ npm run dev
+```
+
+Use `npm run build` to build the finished project.
