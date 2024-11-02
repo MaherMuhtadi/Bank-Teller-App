@@ -2,8 +2,8 @@ function ClientLogin({ onLogin }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         let dummyClient = {
-            firstname: "John",
-            lastname: "Doe",
+            first_name: "John",
+            last_name: "Doe",
             occupation: "Worker",
             dob: "01/01/1990",
             residency: "Citizen",
@@ -11,7 +11,6 @@ function ClientLogin({ onLogin }) {
             email: "JohnDoe@gmail.com",
             password: "password",
             phone: "123-456-7890",
-            nominee: "Jane Doe",
             branch: "Downtown",
             account_type: "Checking",
         };

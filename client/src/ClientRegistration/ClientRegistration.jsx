@@ -15,8 +15,8 @@ function ClientRegistration() {
     ];
     const accountType = ["Chequing", "Savings"];
     const [formValues, setFormValues] = useState({
-        firstname: "",
-        lastname: "",
+        first_name: "",
+        last_name: "",
         email: "",
         password: "",
         phone: "",
@@ -27,7 +27,6 @@ function ClientRegistration() {
         city: "",
         province: "",
         zip: "",
-        nominee: "",
         branch: branch[0],
         account_type: accountType[0],
     });
@@ -45,8 +44,8 @@ function ClientRegistration() {
         e.preventDefault();
         let address = `${formValues.address}, ${formValues.city}, ${formValues.province}, ${formValues.zip}`;
         let client = {
-            firstname: formValues.firstname,
-            lastname: formValues.lastname,
+            first_name: formValues.first_name,
+            last_name: formValues.last_name,
             occupation: formValues.occupation,
             dob: formValues.dob,
             residency: formValues.residency,
@@ -54,7 +53,6 @@ function ClientRegistration() {
             email: formValues.email,
             password: formValues.password,
             phone: formValues.phone,
-            nominee: formValues.nominee,
             branch: formValues.branch,
             account_type: formValues.account_type,
         };
@@ -77,8 +75,8 @@ function ClientRegistration() {
                         <input
                             type="text"
                             id="registration_first_name"
-                            name="firstname"
-                            value={formValues.firstname}
+                            name="first_name"
+                            value={formValues.first_name}
                             onChange={handleChange}
                             className="rounded-md border text-lg p-1"
                         />
@@ -90,8 +88,8 @@ function ClientRegistration() {
                         <input
                             type="text"
                             id="registration_last_name"
-                            name="lastname"
-                            value={formValues.lastname}
+                            name="last_name"
+                            value={formValues.last_name}
                             onChange={handleChange}
                             className="rounded-md border text-lg p-1"
                         />
@@ -231,18 +229,6 @@ function ClientRegistration() {
                             className="rounded-md border text-lg p-1"
                         />
                     </div>
-                </div>
-
-                <div className="flex flex-col space-y-5">
-                    <label htmlFor="registration_nominee">Nominee</label>
-                    <input
-                        type="text"
-                        id="registration_nominee"
-                        name="nominee"
-                        value={formValues.nominee}
-                        onChange={handleChange}
-                        className="rounded-md border text-lg p-1"
-                    />
                 </div>
 
                 <div className="flex flex-col space-y-5">
