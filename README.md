@@ -1,6 +1,6 @@
 # Bank-Teller-App
 
-A tool for bank employees to manage customer accounts and cards, conduct transactions, and detect fraud with machine learning support.
+A CRM for bank employees to manage clients and accounts, conduct transactions, and detect fraud with machine learning support.
 
 ## Tech Stack
 
@@ -15,6 +15,12 @@ A tool for bank employees to manage customer accounts and cards, conduct transac
 -   **Frontend:**
     -   ReactJS (Client)
     -   Tailwind
+
+## Design
+
+### Relational Database
+
+![Image](https://github.com/user-attachments/assets/b0ce98f7-900b-44ea-b747-33fb28756267)
 
 ## Installation
 
