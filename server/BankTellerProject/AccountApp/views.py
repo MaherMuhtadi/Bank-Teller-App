@@ -19,6 +19,42 @@ def get_product_list(request):
     serializer = ProductDropDownSerializer(products, many=True)
     return JsonResponse(serializer.data, safe=False)
 
+@csrf_exempt
+def create_new_client(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = CreateClientSerializer(data=data)
+        if serializer.is_valid():
+            # Generate a unique 10-digit client_id
+            while True:
+                client_id = str(random.randint(1000000000, 9999999999))
+                if not Client.objects.filter(client_id=client_id).exists():
+                    break
+            serializer.save(client_id=client_id)
+            response_data = {
+            'client_id': client_id
+        }
+            return JsonResponse(response_data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def get_client_details(request):
+    if request.method == 'GET':
+        data = JSONParser().parse(request)
+        client_id = data.get('client_id')
+        password = data.get('password')
+
+        try:
+            client = Client.objects.get(client_id=client_id, password=password)
+        except Client.DoesNotExist:
+            return JsonResponse({'error': 'Invalid client_id or password'}, status=400)
+
+        serializer = ClientSerializer(client)
+        return JsonResponse(serializer.data, safe=False, status=200)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
 
 
 
