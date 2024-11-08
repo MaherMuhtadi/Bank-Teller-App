@@ -177,6 +177,18 @@ def create_transaction(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
+@csrf_exempt
+def get_all_transactions(request):
+    if request.method == 'GET':
+        try:
+            transactions = Transaction.objects.all()
+            serializer = TransactionSerializer(transactions, many=True)
+            return JsonResponse(serializer.data, safe=False, status=200)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+
 def calculate_balance_after_transaction(current_balance, amount, transaction_type):
     if transaction_type=='credit':
         return current_balance + amount
