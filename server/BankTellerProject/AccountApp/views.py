@@ -4,8 +4,9 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 import json
 import random
-from .serializers import ClientSerializer, AccountSerializer, BranchSerializer, BranchDropDownSerializer, ProductDropDownSerializer, CreateClientSerializer
+from .serializers import ClientSerializer, AccountSerializer, BranchSerializer, BranchDropDownSerializer, ProductDropDownSerializer, CreateClientSerializer, TransactionSerializer
 from .models import Client, Account, Branch, Product, Transaction, Teller, Schedule
+from datetime import datetime
 # Create your views here.
 
 @csrf_exempt
@@ -113,6 +114,69 @@ def get_account_list_for_a_client(request):
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
+@csrf_exempt
+def create_transaction(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        transaction_type = data.get('transaction_type')
+        from_account_id = data.get('from_account_id')
+        to_account_id = data.get('to_account_id')
+        amount = data.get('amount')
+
+        # Check if the from_account and to_account exist
+        try:
+            from_account = Account.objects.get(account_id=from_account_id)
+            to_account = Account.objects.get(account_id=to_account_id)
+        except Account.DoesNotExist:
+            return JsonResponse({'error': 'Invalid from_account_id or to_account_id'}, status=400)
+
+        # Check if the from_account has sufficient balance
+        if from_account.balance < amount:
+            return JsonResponse({'error': 'Insufficient balance in your account to complete the transaction'}, status=400)
+
+        # Generate a unique 10-digit transaction_id
+        while True:
+            transaction_id = str(random.randint(1000000000, 9999999999))
+            if not Transaction.objects.filter(transaction_id=transaction_id).exists():
+                break
+
+        # Deduct the amount from from_account and add to to_account
+        from_account.balance -= amount
+        to_account.balance += amount
+
+        # Save the updated account balances
+        from_account.save()
+        to_account.save()
+
+        # Create a new Transaction object
+        transaction = Transaction(
+            transaction_id=transaction_id,
+            transaction_type=transaction_type,
+            from_account_id=from_account,
+            to_account_id=to_account,
+            amount=amount,
+            timestamp=datetime.now()
+        )
+
+        # Save the Transaction object to the database
+        transaction.save()
+
+        # Prepare the JSON response
+        transaction_serializer = TransactionSerializer(transaction)
+        from_account_serializer = AccountSerializer(from_account)
+        to_account_serializer = AccountSerializer(to_account)
+
+        response_data = {
+            'transaction_id': transaction.transaction_id,
+            'from_account': from_account_serializer.data,
+            'to_account': to_account_serializer.data,
+            'transaction_details': transaction_serializer.data
+        }
+
+        return JsonResponse(response_data, status=201)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
 def calculate_balance_after_transaction(current_balance, amount, transaction_type):
     if transaction_type=='credit':
         return current_balance + amount
@@ -149,7 +213,6 @@ def depositMoney(request):
         return JsonResponse(response_data, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
-
 
 @csrf_exempt
 def withdrawMoney(request):

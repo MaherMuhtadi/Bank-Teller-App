@@ -10,6 +10,8 @@ urlpatterns = [
     path("get_client_details/", views.get_client_details),
     path("create_new_account/", views.create_new_account),
     path("account_list_for_client/",views.get_account_list_for_a_client),
+    path("transaction/", views.create_transaction),
+
     path("deposite/", views.depositMoney),
     path("withdraw/", views.withdrawMoney),
 ]
