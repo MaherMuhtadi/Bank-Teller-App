@@ -4,9 +4,9 @@ from . import views
 
 urlpatterns = [
     path("/", admin.site.urls),
-    path("account_list/", views.account_list),
-    path("create_newClient/", views.create_newClient),
-    path("create_newAccount/", views.create_newAccount),
+    path("get_branch_list/", views.get_branch_list),
+    path("get_product_list/", views.get_product_list),
+    
     path("deposite/", views.depositMoney),
     path("withdraw/", views.withdrawMoney),
 ]
