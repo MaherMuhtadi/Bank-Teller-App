@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import JSONParser
 import json
 import random
-from .serializers import ClientSerializer, AccountSerializer, BranchSerializer, BranchDropDownSerializer, ProductDropDownSerializer
+from .serializers import ClientSerializer, AccountSerializer, BranchSerializer, BranchDropDownSerializer, ProductDropDownSerializer, CreateClientSerializer
 from .models import Client, Account, Branch, Product, Transaction, Teller, Schedule
 # Create your views here.
 
@@ -17,6 +18,9 @@ def get_product_list(request):
     products = Product.objects.all()
     serializer = ProductDropDownSerializer(products, many=True)
     return JsonResponse(serializer.data, safe=False)
+
+
+
 
 def calculate_balance_after_transaction(current_balance, amount, transaction_type):
     if transaction_type=='credit':

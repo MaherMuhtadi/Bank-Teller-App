@@ -5,7 +5,17 @@ class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
         fields = "__all__"
-
+class CreateClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = [
+            'first_name', 'last_name', 'email', 'phone', 'password', 'dob',
+            'client_identification_document_type', 'client_identification_document_number',
+            'residency', 'address', 'occupation', 'nominee_name',
+            'nominee_identification_document_type', 'nominee_identification_document_number',
+            'nominee_relation', 'branch_id'
+        ]
+        
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
