@@ -55,7 +55,62 @@ def get_client_details(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
+@csrf_exempt
+def create_new_account(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        client_id = data.get('client_id')
+        product_id = data.get('product_id')
 
+        # Check if the client and product exist
+        try:
+            client = Client.objects.get(client_id=client_id)
+            product = Product.objects.get(product_id=product_id)
+        except (Client.DoesNotExist, Product.DoesNotExist):
+            return JsonResponse({'error': 'Invalid client_id or product_id'}, status=400)
+        # Generate a unique 9-digit account_id
+        while True:
+            account_id = str(random.randint(100000000, 999999999))
+            if not Account.objects.filter(account_id=account_id).exists():
+                break
+
+        # Create a new Account object
+        account = Account(
+            account_id=account_id,
+            client_id=client,
+            product_id=product,
+            balance=0
+        )
+
+        # Save the Account object to the database
+        account.save()
+
+        # Prepare the JSON response
+        response_data = {
+            'account_id': account.account_id
+        }
+
+        return JsonResponse(response_data, status=201)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def get_account_list_for_a_client(request):
+    if request.method == 'GET':
+        data = JSONParser().parse(request)
+        client_id = data.get('client_id')
+        password = data.get('password')
+
+        try:
+            client = Client.objects.get(client_id=client_id, password=password)
+        except Client.DoesNotExist:
+            return JsonResponse({'error': 'Invalid client_id or password'}, status=400)
+
+        accounts = Account.objects.filter(client_id=client)
+        serializer = AccountSerializer(accounts, many=True)
+        return JsonResponse(serializer.data, safe=False, status=200)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
 def calculate_balance_after_transaction(current_balance, amount, transaction_type):
