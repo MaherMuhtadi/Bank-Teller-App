@@ -3,13 +3,13 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 import random
-from .serializers import ClientSerializer, BankAccountSerializer
-from .models import Client, BankAccount
+from .serializers import ClientSerializer, AccountSerializer
+from .models import Client, Account
 # Create your views here.
 
 def account_list(request):
-    accounts = BankAccount.objects.all()
-    serializer = BankAccountSerializer(accounts, many=True)
+    accounts = Account.objects.all()
+    serializer = AccountSerializer(accounts, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 @csrf_exempt
@@ -77,7 +77,7 @@ def create_newAccount(request):
 
         
         # Fetch all existing client IDs
-        existing_account_ids = set(BankAccount.objects.values_list('account_no', flat=True))
+        existing_account_ids = set(Account.objects.values_list('account_no', flat=True))
 
         # Generate a unique 12-digit client ID
         while True:
@@ -86,7 +86,7 @@ def create_newAccount(request):
                 break
 
         # Create a new Client object
-        bankAccount = BankAccount(
+        bankAccount = Account(
            account_no=account_no,
             client=client,
             account_type=account_type,
@@ -121,8 +121,8 @@ def depositMoney(request):
 
         # Check if the account exists
         try:
-            account = BankAccount.objects.get(account_no=account_no)
-        except BankAccount.DoesNotExist:
+            account = Account.objects.get(account_no=account_no)
+        except Account.DoesNotExist:
             return JsonResponse({'error': 'Account does not exist'}, status=404)
 
         # Add the amount to the account balance
@@ -153,8 +153,8 @@ def withdrawMoney(request):
 
         # Check if the account exists
         try:
-            account = BankAccount.objects.get(account_no=account_no)
-        except BankAccount.DoesNotExist:
+            account = Account.objects.get(account_no=account_no)
+        except Account.DoesNotExist:
             return JsonResponse({'error': 'Account does not exist'}, status=404)
 
         # Check if the account has sufficient balance
