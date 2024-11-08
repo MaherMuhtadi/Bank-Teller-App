@@ -59,27 +59,3 @@ plt.xlabel('Transaction ID')
 plt.ylabel('Transaction Amount')
 plt.show()
 
-
-# In[12]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
