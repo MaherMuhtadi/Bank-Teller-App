@@ -3,114 +3,27 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 import random
-from .serializers import ClientSerializer, AccountSerializer
-from .models import Client, Account
+from .serializers import ClientSerializer, AccountSerializer, BranchSerializer, BranchDropDownSerializer, ProductDropDownSerializer
+from .models import Client, Account, Branch, Product, Transaction, Teller, Schedule
 # Create your views here.
 
-def account_list(request):
-    accounts = Account.objects.all()
-    serializer = AccountSerializer(accounts, many=True)
+@csrf_exempt
+def get_branch_list(request):
+    branches = Branch.objects.all()
+    serializer = BranchDropDownSerializer(branches, many=True)
     return JsonResponse(serializer.data, safe=False)
-
 @csrf_exempt
-def create_newClient(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        firstname = data.get('firstname')
-        lastname = data.get('lastname')
-        occupation = data.get('occupation')
-        address = data.get('address')
-        email = data.get('email')
-        phone = data.get('phone')
-        nominee = data.get('nominee')
-
-        # Generate a unique 9-digit client ID
-        client_id = str(random.randint(100000000000, 999999999999))
-
-        
-        # Fetch all existing client IDs
-        existing_client_ids = set(Client.objects.values_list('client_id', flat=True))
-
-        # Generate a unique 12-digit client ID
-        while True:
-            client_id = str(random.randint(100000000000, 999999999999))
-            if client_id not in existing_client_ids:
-                break
-
-        # Create a new Client object
-        client = Client(
-            client_id=client_id,
-            firstname=firstname,
-            lastname=lastname,
-            occupation=occupation,
-            address=address,
-            email=email,
-            phone=phone,
-            nominee=nominee
-        )
-
-        # Save the Client object to the database
-        client.save()
-        response_data = {
-            'client_id': client_id,
-            'user_name': f"{firstname} {lastname}"
-        }
-
-        return JsonResponse(response_data, status=201)
-
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
-
-
-@csrf_exempt
-def create_newAccount(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        client = data.get('client')
-        account_type = data.get('account_type')
-        branch = data.get('branch')
-
-        # Check if the client exists
-        try:
-            client = Client.objects.get(client_id=client)
-        except Client.DoesNotExist:
-            return JsonResponse({'error': 'Client does not exist'}, status=404)
-
-        
-        # Fetch all existing client IDs
-        existing_account_ids = set(Account.objects.values_list('account_no', flat=True))
-
-        # Generate a unique 12-digit client ID
-        while True:
-            account_no = str(random.randint(100000000, 999999999))
-            if account_no not in existing_account_ids:
-                break
-
-        # Create a new Client object
-        bankAccount = Account(
-           account_no=account_no,
-            client=client,
-            account_type=account_type,
-            balance=0,
-            branch=branch
-        )
-
-        # Save the Client object to the database
-        bankAccount.save()
-        response_data = {
-            'account_no': account_no,
-            'nameOfAccount': f"{client.firstname} {client.lastname}"
-        }
-
-        return JsonResponse(response_data, status=201)
-
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
+def get_product_list(request):
+    products = Product.objects.all()
+    serializer = ProductDropDownSerializer(products, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
 def calculate_balance_after_transaction(current_balance, amount, transaction_type):
     if transaction_type=='credit':
         return current_balance + amount
     elif transaction_type=='debit':
         return current_balance - amount
-
+ 
 @csrf_exempt
 def depositMoney(request):
     if request.method == 'POST':
