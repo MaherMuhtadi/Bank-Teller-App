@@ -20,7 +20,7 @@ A CRM for bank employees to manage clients and accounts, conduct transactions, a
 
 ### Relational Database
 
-![Image](https://github.com/user-attachments/assets/b0ce98f7-900b-44ea-b747-33fb28756267)
+![Image](https://github.com/user-attachments/assets/74011f43-2e56-4c78-a56c-eb3eb3aa70cb)
 
 ## Installation
 
@@ -45,4 +45,4 @@ $ npm install
 $ npm run dev
 ```
 
-Use `npm run build` to build the finished project.
+Use `npm run build` to build the finished project for production.
