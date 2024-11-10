@@ -125,7 +125,51 @@ function ClientRegistration() {
         }
     };
 
-    const handleSubmit = (e) => {
+    const createNewClient = async (clientData) => {
+        try {
+            const response = await fetch(apiUrl + "create_new_client/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(clientData),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to create client");
+            }
+
+            const data = await response.json();
+            return data.client_id;
+        } catch (error) {
+            console.error("Error:", error);
+            throw error; // Rethrow the error so it can be handled by the caller
+        }
+    };
+
+    const createNewAccount = async (accountData) => {
+        try {
+            const response = await fetch(apiUrl + "create_new_account/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(accountData),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to create account");
+            }
+
+            const data = await response.json();
+            return data.account_id;
+        } catch (error) {
+            console.error("Error:", error);
+            throw error; // Rethrow the error so it can be handled by the caller
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         let address = `${formValues.address}, ${formValues.city}, ${formValues.province}, ${formValues.zip}`;
         let client = {
@@ -149,10 +193,26 @@ function ClientRegistration() {
                 formValues.nominee_identification_document_number,
             nominee_relation: formValues.nominee_relation,
             branch_id: formValues.branch_id,
-            product_id: formValues.product_id,
         };
-        client.client_id = Math.floor(Math.random() * 10000000000).toString();
-        navigate("/client_info", { state: { client } });
+        try {
+            let client_id = await createNewClient(client);
+            let account = {
+                client_id: client_id,
+                product_id: formValues.product_id,
+            };
+            await createNewAccount(account);
+            navigate("/client_info", {
+                state: {
+                    client: {
+                        ...client,
+                        client_id: client_id,
+                        product_id: formValues.product_id,
+                    },
+                },
+            });
+        } catch (error) {
+            setError(error.message);
+        }
     };
 
     if (branchesLoading || productsLoading) {
