@@ -5,7 +5,11 @@ class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
         fields = "__all__"
-
+class CreateClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        exclude = ['client_id']
+        
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
