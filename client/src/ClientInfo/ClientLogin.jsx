@@ -2,17 +2,24 @@ function ClientLogin({ onLogin }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         let dummyClient = {
+            client_id: "1234567890",
             first_name: "John",
             last_name: "Doe",
-            occupation: "Worker",
-            dob: "01/01/1990",
-            residency: "Citizen",
-            address: "1234 Elm St",
-            email: "JohnDoe@gmail.com",
+            email: "john.doe@gmail.com",
+            phone: "1234567890",
             password: "password",
-            phone: "123-456-7890",
-            branch: "Downtown",
-            account_type: "Checking",
+            dob: "01/01/2000",
+            client_identification_document_type: "Passport",
+            client_identification_document_number: "AB123456789",
+            residency: "Citizen",
+            address: "123 Main St, Springfield, IL 62701",
+            occupation: "Software Engineer",
+            nominee_name: "Jane Doe",
+            nominee_identification_document_type: "Passport",
+            nominee_identification_document_number: "CD123456789",
+            nominee_relation: "Spouse",
+            branch_id: "101",
+            product_id: "801",
         };
         onLogin(dummyClient);
     };

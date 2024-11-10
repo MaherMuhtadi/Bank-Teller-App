@@ -8,12 +8,13 @@ function ClientRegistration() {
         "Foreign Worker",
         "Foreign Student",
     ];
-    const branch = [
-        "2 Harwood Ave S, Ajax",
-        "43 Conlin Rd E, Oshawa",
-        "714 Rossland Rd E, Whitby",
-    ];
-    const accountType = ["Chequing", "Savings"];
+    const identification = ["Passport", "Driver's License", "Health Card"];
+    const branch = {
+        101: "2 Harwood Ave S, Ajax",
+        102: "43 Conlin Rd E, Oshawa",
+        103: "714 Rossland Rd E, Whitby",
+    };
+    const product = { 801: "Chequing", 802: "Savings" };
     const [formValues, setFormValues] = useState({
         first_name: "",
         last_name: "",
@@ -22,13 +23,19 @@ function ClientRegistration() {
         phone: "",
         occupation: "",
         dob: "",
+        client_identification_document_type: identification[0],
+        client_identification_document_number: "",
         residency: residency[0],
         address: "",
         city: "",
         province: "",
         zip: "",
-        branch: branch[0],
-        account_type: accountType[0],
+        nominee_name: "",
+        nominee_relation: "",
+        nominee_identification_document_type: "",
+        nominee_identification_document_number: "",
+        branch_id: Object.keys(branch)[0],
+        product_id: Object.keys(product)[0],
     });
     const navigate = useNavigate();
 
@@ -40,22 +47,42 @@ function ClientRegistration() {
         }));
     };
 
+    const handleNominee = (e) => {
+        if (e.target.checked) {
+            document.getElementById("nominee_fields").className =
+                "flex flex-col space-y-5";
+        } else {
+            document.getElementById("nominee_fields").className = "hidden";
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         let address = `${formValues.address}, ${formValues.city}, ${formValues.province}, ${formValues.zip}`;
         let client = {
             first_name: formValues.first_name,
             last_name: formValues.last_name,
-            occupation: formValues.occupation,
+            email: formValues.email,
+            phone: formValues.phone,
+            password: formValues.password,
             dob: formValues.dob,
+            client_identification_document_type:
+                formValues.client_identification_document_type,
+            client_identification_document_number:
+                formValues.client_identification_document_number,
             residency: formValues.residency,
             address: address,
-            email: formValues.email,
-            password: formValues.password,
-            phone: formValues.phone,
-            branch: formValues.branch,
-            account_type: formValues.account_type,
+            occupation: formValues.occupation,
+            nominee_name: formValues.nominee_name,
+            nominee_identification_document_type:
+                formValues.nominee_identification_document_type,
+            nominee_identification_document_number:
+                formValues.nominee_identification_document_number,
+            nominee_relation: formValues.nominee_relation,
+            branch_id: formValues.branch_id,
+            product_id: formValues.product_id,
         };
+        client.client_id = Math.floor(Math.random() * 10000000000).toString();
         navigate("/client_info", { state: { client } });
     };
 
@@ -66,6 +93,8 @@ function ClientRegistration() {
                 className="flex flex-col space-y-5 w-1/3 min-w-fit"
             >
                 <h2 className="font-bold text-center">New Client</h2>
+
+                <h3 className="font-bold italic">Profile Information</h3>
 
                 <div className="flex justify-between space-x-6">
                     <div className="flex flex-col space-y-5 w-1/2">
@@ -133,6 +162,22 @@ function ClientRegistration() {
                         />
                     </div>
                     <div className="flex flex-col space-y-5 w-1/2">
+                        <label htmlFor="registration_dob">Date of Birth</label>
+                        <input
+                            type="date"
+                            id="registration_dob"
+                            name="dob"
+                            value={formValues.dob}
+                            onChange={handleChange}
+                            className="rounded-md border text-lg p-1"
+                        />
+                    </div>
+                </div>
+
+                <h3 className="font-bold italic">Background Information</h3>
+
+                <div className="flex justify-between space-x-6">
+                    <div className="flex flex-col space-y-5 w-1/2">
                         <label htmlFor="registration_occupation">
                             Occupation
                         </label>
@@ -141,20 +186,6 @@ function ClientRegistration() {
                             id="registration_occupation"
                             name="occupation"
                             value={formValues.occupation}
-                            onChange={handleChange}
-                            className="rounded-md border text-lg p-1"
-                        />
-                    </div>
-                </div>
-
-                <div className="flex justify-between space-x-6">
-                    <div className="flex flex-col space-y-5 w-1/2">
-                        <label htmlFor="registration_dob">Date of Birth</label>
-                        <input
-                            type="date"
-                            id="registration_dob"
-                            name="dob"
-                            value={formValues.dob}
                             onChange={handleChange}
                             className="rounded-md border text-lg p-1"
                         />
@@ -176,6 +207,45 @@ function ClientRegistration() {
                                 </option>
                             ))}
                         </select>
+                    </div>
+                </div>
+
+                <div className="flex justify-between space-x-6">
+                    <div className="flex flex-col space-y-5 w-1/2">
+                        <label htmlFor="registration_client_identification_document_type">
+                            Government ID Type
+                        </label>
+                        <select
+                            id="registration_client_identification_document_type"
+                            name="client_identification_document_type"
+                            value={
+                                formValues.client_identification_document_type
+                            }
+                            onChange={handleChange}
+                            className="rounded-md border text-lg p-1"
+                        >
+                            {identification.map((document, index) => (
+                                <option key={index} value={document}>
+                                    {document}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="flex flex-col space-y-5 w-1/2">
+                        <label htmlFor="registration_client_identification_document_number">
+                            Government ID Number
+                        </label>
+                        <input
+                            type="text"
+                            id="registration_client_identification_document_number"
+                            name="client_identification_document_number"
+                            value={
+                                formValues.client_identification_document_number
+                            }
+                            onChange={handleChange}
+                            className="rounded-md border text-lg p-1"
+                        />
                     </div>
                 </div>
 
@@ -231,20 +301,106 @@ function ClientRegistration() {
                     </div>
                 </div>
 
+                <h3 className="font-bold italic">Nominee Information</h3>
+                <label
+                    htmlFor="registration_nominee"
+                    className="flex space-x-6"
+                >
+                    <p>Add Nominee</p>
+                    <input
+                        type="checkbox"
+                        id="registration_nominee"
+                        onClick={handleNominee}
+                    />
+                </label>
+
+                <div id="nominee_fields" className="hidden">
+                    <div className="flex justify-between space-x-6">
+                        <div className="flex flex-col space-y-5 w-1/2">
+                            <label htmlFor="registration_nominee_name">
+                                Name
+                            </label>
+                            <input
+                                type="text"
+                                id="registration_nominee_name"
+                                name="nominee_name"
+                                value={formValues.nominee_name}
+                                onChange={handleChange}
+                                className="rounded-md border text-lg p-1"
+                            />
+                        </div>
+                        <div className="flex flex-col space-y-5 w-1/2">
+                            <label htmlFor="registration_nominee_relation">
+                                Relationship
+                            </label>
+                            <input
+                                type="text"
+                                id="registration_nominee_relation"
+                                name="nominee_relation"
+                                value={formValues.nominee_relation}
+                                onChange={handleChange}
+                                className="rounded-md border text-lg p-1"
+                            />
+                        </div>
+                    </div>
+                    <div className="flex justify-between space-x-6">
+                        <div className="flex flex-col space-y-5 w-1/2">
+                            <label htmlFor="registration_nominee_identification_document_type">
+                                Government ID Type
+                            </label>
+                            <select
+                                id="registration_nominee_identification_document_type"
+                                name="nominee_identification_document_type"
+                                value={
+                                    formValues.nominee_identification_document_type
+                                }
+                                onChange={handleChange}
+                                className="rounded-md border text-lg p-1"
+                            >
+                                <option value="" />
+                                {identification.map((document, index) => (
+                                    <option key={index} value={document}>
+                                        {document}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex flex-col space-y-5 w-1/2">
+                            <label htmlFor="registration_nominee_identification_document_number">
+                                Government ID Number
+                            </label>
+                            <input
+                                type="text"
+                                id="registration_nominee_identification_document_number"
+                                name="nominee_identification_document_number"
+                                value={
+                                    formValues.nominee_identification_document_number
+                                }
+                                onChange={handleChange}
+                                className="rounded-md border text-lg p-1"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <h3 className="font-bold italic">Account Information</h3>
+
                 <div className="flex flex-col space-y-5">
                     <label htmlFor="registration_branch">Branch</label>
                     <select
                         id="registration_branch"
-                        name="branch"
-                        value={formValues.branch}
+                        name="branch_id"
+                        value={formValues.branch_id}
                         onChange={handleChange}
                         className="rounded-md border text-lg p-1"
                     >
-                        {branch.map((branch, index) => (
-                            <option key={index} value={branch}>
-                                {branch}
-                            </option>
-                        ))}
+                        {Object.entries(branch).map(
+                            ([branch_id, branch_name]) => (
+                                <option key={branch_id} value={branch_id}>
+                                    {branch_name}
+                                </option>
+                            )
+                        )}
                     </select>
                 </div>
 
@@ -254,16 +410,18 @@ function ClientRegistration() {
                     </label>
                     <select
                         id="registration_account_type"
-                        name="account_type"
-                        value={formValues.account_type}
+                        name="product_id"
+                        value={formValues.product_id}
                         onChange={handleChange}
                         className="rounded-md border text-lg p-1"
                     >
-                        {accountType.map((type, index) => (
-                            <option key={index} value={type}>
-                                {type}
-                            </option>
-                        ))}
+                        {Object.entries(product).map(
+                            ([product_id, product_name]) => (
+                                <option key={product_id} value={product_id}>
+                                    {product_name}
+                                </option>
+                            )
+                        )}
                     </select>
                 </div>
 
