@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function ClientRegistration() {
+    const apiUrl = "http://127.0.0.1:8000/account/";
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
     const residency = [
         "Citizen",
         "Permanent Resident",
@@ -9,11 +13,6 @@ function ClientRegistration() {
         "Foreign Student",
     ];
     const identification = ["Passport", "Driver's License", "Health Card"];
-    const branch = {
-        101: "2 Harwood Ave S, Ajax",
-        102: "43 Conlin Rd E, Oshawa",
-        103: "714 Rossland Rd E, Whitby",
-    };
     const product = { 801: "Chequing", 802: "Savings" };
     const [formValues, setFormValues] = useState({
         first_name: "",
@@ -34,9 +33,46 @@ function ClientRegistration() {
         nominee_relation: "",
         nominee_identification_document_type: "",
         nominee_identification_document_number: "",
-        branch_id: Object.keys(branch)[0],
+        branch_id: "", // Set once branches are loaded
         product_id: Object.keys(product)[0],
     });
+    const [branches, setBranches] = useState([]);
+
+    useEffect(() => {
+        async function getBranches() {
+            try {
+                const response = await fetch(apiUrl + "get_branch_list/", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.statusText}`);
+                }
+                const data = await response.json();
+                setBranches(data);
+            } catch (error) {
+                setError(error.message); // Set error if any occurs
+                console.error("Error fetching branches:", error);
+            } finally {
+                setLoading(false); // Set loading to false once done
+            }
+        }
+
+        getBranches(); // Call the function on component mount
+    }, []); // Empty dependency array to run only once when the component mounts
+
+    // Update branch_id once branches are loaded
+    useEffect(() => {
+        if (branches.length > 0) {
+            setFormValues((prevValues) => ({
+                ...prevValues,
+                branch_id: branches[0].branch_id,
+            }));
+        }
+    }, [branches]); // Run only when branches are updated
+
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -85,6 +121,14 @@ function ClientRegistration() {
         client.client_id = Math.floor(Math.random() * 10000000000).toString();
         navigate("/client_info", { state: { client } });
     };
+
+    if (loading) {
+        return <div className="flex justify-center">Loading...</div>; // Show loading message while data is being fetched
+    }
+
+    if (error) {
+        return <div className="flex justify-center">Error: {error}</div>; // Display any error that occurs
+    }
 
     return (
         <div className="flex justify-center h-full p-4">
@@ -402,13 +446,14 @@ function ClientRegistration() {
                         onChange={handleChange}
                         className="rounded-md border text-lg p-1"
                     >
-                        {Object.entries(branch).map(
-                            ([branch_id, branch_name]) => (
-                                <option key={branch_id} value={branch_id}>
-                                    {branch_name}
-                                </option>
-                            )
-                        )}
+                        {branches.map((branchItem) => (
+                            <option
+                                key={branchItem.branch_id}
+                                value={branchItem.branch_id}
+                            >
+                                {branchItem.branch_name}
+                            </option>
+                        ))}
                     </select>
                 </div>
 

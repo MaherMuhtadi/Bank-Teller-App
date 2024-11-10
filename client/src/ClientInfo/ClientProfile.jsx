@@ -1,10 +1,45 @@
+import { useState, useEffect } from "react";
+
 function ClientProfile({ client }) {
-    const branch = {
-        101: "2 Harwood Ave S, Ajax",
-        102: "43 Conlin Rd E, Oshawa",
-        103: "714 Rossland Rd E, Whitby",
-    };
+    const apiUrl = "http://127.0.0.1:8000/account/";
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
     const product = { 801: "Chequing", 802: "Savings" };
+    const [branches, setBranches] = useState([]);
+
+    useEffect(() => {
+        async function getBranches() {
+            try {
+                const response = await fetch(apiUrl + "get_branch_list/", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.statusText}`);
+                }
+                const data = await response.json();
+                setBranches(data);
+            } catch (error) {
+                setError(error.message); // Set error if any occurs
+                console.error("Error fetching branches:", error);
+            } finally {
+                setLoading(false); // Set loading to false once done
+            }
+        }
+
+        getBranches(); // Call the function on component mount
+    }, []); // Empty dependency array to run only once when the component mounts
+
+    if (loading) {
+        return <div className="flex justify-center">Loading...</div>; // Show loading message while data is being fetched
+    }
+
+    if (error) {
+        return <div className="flex justify-center">Error: {error}</div>; // Display any error that occurs
+    }
 
     return (
         <div className="flex justify-center p-4">
@@ -102,7 +137,11 @@ function ClientProfile({ client }) {
                 <div>
                     <p>
                         <span className="font-bold">Branch:</span>{" "}
-                        {branch[client.branch_id]}
+                        {
+                            branches.find(
+                                (b) => b.branch_id === client.branch_id
+                            ).branch_name
+                        }
                     </p>
                     <p>
                         <span className="font-bold">Product:</span>{" "}
