@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 function ClientRegistration() {
     const apiUrl = "http://127.0.0.1:8000/account/";
-    const [loading, setLoading] = useState(true);
+    const [branchesLoading, setBranchesLoading] = useState(true);
+    const [productsLoading, setProductsLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const residency = [
@@ -13,7 +14,6 @@ function ClientRegistration() {
         "Foreign Student",
     ];
     const identification = ["Passport", "Driver's License", "Health Card"];
-    const product = { 801: "Chequing", 802: "Savings" };
     const [formValues, setFormValues] = useState({
         first_name: "",
         last_name: "",
@@ -34,33 +34,56 @@ function ClientRegistration() {
         nominee_identification_document_type: "",
         nominee_identification_document_number: "",
         branch_id: "", // Set once branches are loaded
-        product_id: Object.keys(product)[0],
+        product_id: "", // Set once products are loaded
     });
     const [branches, setBranches] = useState([]);
+    const [products, setProducts] = useState({});
+
+    async function getBranches() {
+        try {
+            const response = await fetch(apiUrl + "get_branch_list/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+            const data = await response.json();
+            setBranches(data);
+        } catch (error) {
+            setError(error.message); // Set error if any occurs
+            console.error("Error fetching branches:", error);
+        } finally {
+            setBranchesLoading(false); // Set loading to false once done
+        }
+    }
+
+    async function getProducts() {
+        try {
+            const response = await fetch(apiUrl + "get_product_list/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+            const data = await response.json();
+            setProducts(data);
+        } catch (error) {
+            setError(error.message); // Set error if any occurs
+            console.error("Error fetching products:", error);
+        } finally {
+            setProductsLoading(false); // Set loading to false once done
+        }
+    }
 
     useEffect(() => {
-        async function getBranches() {
-            try {
-                const response = await fetch(apiUrl + "get_branch_list/", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.statusText}`);
-                }
-                const data = await response.json();
-                setBranches(data);
-            } catch (error) {
-                setError(error.message); // Set error if any occurs
-                console.error("Error fetching branches:", error);
-            } finally {
-                setLoading(false); // Set loading to false once done
-            }
-        }
-
-        getBranches(); // Call the function on component mount
+        getBranches();
+        getProducts();
     }, []); // Empty dependency array to run only once when the component mounts
 
     // Update branch_id once branches are loaded
@@ -72,6 +95,16 @@ function ClientRegistration() {
             }));
         }
     }, [branches]); // Run only when branches are updated
+
+    // Update product_id once products are loaded
+    useEffect(() => {
+        if (Object.keys(products).length > 0) {
+            setFormValues((prevValues) => ({
+                ...prevValues,
+                product_id: Object.keys(products)[0],
+            }));
+        }
+    }, [products]); // Run only when products are updated
 
     const navigate = useNavigate();
 
@@ -122,7 +155,7 @@ function ClientRegistration() {
         navigate("/client_info", { state: { client } });
     };
 
-    if (loading) {
+    if (branchesLoading || productsLoading) {
         return <div className="flex justify-center">Loading...</div>; // Show loading message while data is being fetched
     }
 
@@ -468,13 +501,14 @@ function ClientRegistration() {
                         onChange={handleChange}
                         className="rounded-md border text-lg p-1"
                     >
-                        {Object.entries(product).map(
-                            ([product_id, product_name]) => (
-                                <option key={product_id} value={product_id}>
-                                    {product_name}
-                                </option>
-                            )
-                        )}
+                        {products.map((productItem) => (
+                            <option
+                                key={productItem.product_id}
+                                value={productItem.product_id}
+                            >
+                                {productItem.product_name}
+                            </option>
+                        ))}
                     </select>
                 </div>
 

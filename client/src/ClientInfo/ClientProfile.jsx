@@ -2,38 +2,61 @@ import { useState, useEffect } from "react";
 
 function ClientProfile({ client }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
-    const [loading, setLoading] = useState(true);
+    const [branchesLoading, setBranchesLoading] = useState(true);
+    const [productsLoading, setProductsLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const product = { 801: "Chequing", 802: "Savings" };
     const [branches, setBranches] = useState([]);
+    const [products, setProducts] = useState([]);
+
+    async function getBranches() {
+        try {
+            const response = await fetch(apiUrl + "get_branch_list/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+            const data = await response.json();
+            setBranches(data);
+        } catch (error) {
+            setError(error.message); // Set error if any occurs
+            console.error("Error fetching branches:", error);
+        } finally {
+            setBranchesLoading(false); // Set loading to false once done
+        }
+    }
+
+    async function getProducts() {
+        try {
+            const response = await fetch(apiUrl + "get_product_list/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+            const data = await response.json();
+            setProducts(data);
+        } catch (error) {
+            setError(error.message); // Set error if any occurs
+            console.error("Error fetching products:", error);
+        } finally {
+            setProductsLoading(false); // Set loading to false once done
+        }
+    }
 
     useEffect(() => {
-        async function getBranches() {
-            try {
-                const response = await fetch(apiUrl + "get_branch_list/", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.statusText}`);
-                }
-                const data = await response.json();
-                setBranches(data);
-            } catch (error) {
-                setError(error.message); // Set error if any occurs
-                console.error("Error fetching branches:", error);
-            } finally {
-                setLoading(false); // Set loading to false once done
-            }
-        }
-
-        getBranches(); // Call the function on component mount
+        getBranches();
+        getProducts();
     }, []); // Empty dependency array to run only once when the component mounts
 
-    if (loading) {
+    if (branchesLoading || productsLoading) {
         return <div className="flex justify-center">Loading...</div>; // Show loading message while data is being fetched
     }
 
@@ -145,7 +168,11 @@ function ClientProfile({ client }) {
                     </p>
                     <p>
                         <span className="font-bold">Product:</span>{" "}
-                        {product[client.product_id]}
+                        {
+                            products.find(
+                                (p) => p.product_id === client.product_id
+                            ).product_name
+                        }
                     </p>
                 </div>
             </div>
