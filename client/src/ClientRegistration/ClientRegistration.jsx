@@ -92,9 +92,11 @@ function ClientRegistration() {
                 onSubmit={handleSubmit}
                 className="flex flex-col space-y-5 w-1/3 min-w-fit"
             >
-                <h2 className="font-bold text-center">New Client</h2>
+                <h2 className="font-bold text-xl text-center">New Client</h2>
 
-                <h3 className="font-bold italic">Profile Information</h3>
+                <h3 className="font-bold text-lg italic">
+                    Profile Information
+                </h3>
 
                 <div className="flex justify-between space-x-6">
                     <div className="flex flex-col space-y-5 w-1/2">
@@ -174,7 +176,9 @@ function ClientRegistration() {
                     </div>
                 </div>
 
-                <h3 className="font-bold italic">Background Information</h3>
+                <h3 className="font-bold text-lg italic">
+                    Background Information
+                </h3>
 
                 <div className="flex justify-between space-x-6">
                     <div className="flex flex-col space-y-5 w-1/2">
@@ -301,7 +305,9 @@ function ClientRegistration() {
                     </div>
                 </div>
 
-                <h3 className="font-bold italic">Nominee Information</h3>
+                <h3 className="font-bold text-lg italic">
+                    Nominee Information
+                </h3>
                 <label
                     htmlFor="registration_nominee"
                     className="flex space-x-6"
@@ -383,7 +389,9 @@ function ClientRegistration() {
                     </div>
                 </div>
 
-                <h3 className="font-bold italic">Account Information</h3>
+                <h3 className="font-bold text-lg italic">
+                    Account Information
+                </h3>
 
                 <div className="flex flex-col space-y-5">
                     <label htmlFor="registration_branch">Branch</label>

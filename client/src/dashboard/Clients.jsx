@@ -1,7 +1,7 @@
 function Clients() {
     return (
         <nav className="rounded-xl bg-neutral-50 p-4 shadow-md">
-            <h2 className="font-bold">Clients</h2>
+            <h2 className="font-bold text-xl">Clients</h2>
             <ul className="flex justify-between">
                 <li>
                     <a href="client_info">

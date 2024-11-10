@@ -30,7 +30,7 @@ function ClientLogin({ onLogin }) {
                 className="flex flex-col space-y-5 w-1/2 min-w-fit"
                 onSubmit={handleSubmit}
             >
-                <h2 className="font-bold text-center">Client Login</h2>
+                <h2 className="font-bold text-xl text-center">Client Login</h2>
                 <div className="flex flex-col space-y-5">
                     <label htmlFor="login_client_id">Client ID:</label>
                     <input

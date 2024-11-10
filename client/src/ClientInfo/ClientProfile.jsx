@@ -9,8 +9,12 @@ function ClientProfile({ client }) {
     return (
         <div className="flex justify-center p-4">
             <div className="flex flex-col space-y-6 w-1/2 bg-neutral-50 p-4 rounded-xl">
-                <h2 className="font-bold text-center">Client Profile</h2>
-                <h3 className="font-bold italic">Profile Information</h3>
+                <h2 className="font-bold text-xl text-center">
+                    Client Profile
+                </h2>
+                <h3 className="font-bold text-lg italic">
+                    Profile Information
+                </h3>
                 <div>
                     <p>
                         <span className="font-bold">Client ID:</span>{" "}
@@ -40,7 +44,9 @@ function ClientProfile({ client }) {
                     </p>
                 </div>
 
-                <h3 className="font-bold italic">Background Information</h3>
+                <h3 className="font-bold text-lg italic">
+                    Background Information
+                </h3>
                 <div>
                     <p>
                         <span className="font-bold">Occupation:</span>{" "}
@@ -63,8 +69,11 @@ function ClientProfile({ client }) {
                         {client.address}
                     </p>
                 </div>
+
+                <h3 className="font-bold text-lg italic">
+                    Nominee Information
+                </h3>
                 <div>
-                    <h3 className="font-bold italic">Nominee Information</h3>
                     <p>
                         <span className="font-bold">Nominee:</span>{" "}
                         {client.nominee_name}
@@ -87,15 +96,17 @@ function ClientProfile({ client }) {
                     </p>
                 </div>
 
+                <h3 className="font-bold text-lg italic">
+                    Account Information
+                </h3>
                 <div>
-                    <h3 className="font-bold italic">Account Information</h3>
                     <p>
                         <span className="font-bold">Branch:</span>{" "}
                         {branch[client.branch_id]}
                     </p>
                     <p>
                         <span className="font-bold">Product:</span>{" "}
-                        {client.product_id}
+                        {product[client.product_id]}
                     </p>
                 </div>
             </div>
