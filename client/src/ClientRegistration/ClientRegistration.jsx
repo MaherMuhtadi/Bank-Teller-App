@@ -37,7 +37,7 @@ function ClientRegistration() {
         product_id: "", // Set once products are loaded
     });
     const [branches, setBranches] = useState([]);
-    const [products, setProducts] = useState({});
+    const [products, setProducts] = useState([]);
 
     async function getBranches() {
         try {
@@ -136,7 +136,7 @@ function ClientRegistration() {
             });
 
             if (!response.ok) {
-                throw new Error("Failed to create client");
+                throw new Error(`Error: ${response.statusText}`);
             }
 
             const data = await response.json();
@@ -158,7 +158,7 @@ function ClientRegistration() {
             });
 
             if (!response.ok) {
-                throw new Error("Failed to create account");
+                throw new Error(`Error: ${response.statusText}`);
             }
 
             const data = await response.json();
@@ -206,7 +206,6 @@ function ClientRegistration() {
                     client: {
                         ...client,
                         client_id: client_id,
-                        product_id: formValues.product_id,
                     },
                 },
             });
@@ -220,7 +219,7 @@ function ClientRegistration() {
     }
 
     if (error) {
-        return <div className="flex justify-center">Error: {error}</div>; // Display any error that occurs
+        return <div className="flex justify-center">{error}</div>; // Display any error that occurs
     }
 
     return (

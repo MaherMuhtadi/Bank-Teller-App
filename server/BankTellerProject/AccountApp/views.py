@@ -41,7 +41,7 @@ def create_new_client(request):
 
 @csrf_exempt
 def get_client_details(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
         data = JSONParser().parse(request)
         client_id = data.get('client_id')
         password = data.get('password')
@@ -97,7 +97,7 @@ def create_new_account(request):
 
 @csrf_exempt
 def get_account_list_for_a_client(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
         data = JSONParser().parse(request)
         client_id = data.get('client_id')
         password = data.get('password')

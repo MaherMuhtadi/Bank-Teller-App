@@ -1,27 +1,48 @@
+import { useState } from "react";
+
 function ClientLogin({ onLogin }) {
-    const handleSubmit = (e) => {
+    const apiUrl = "http://127.0.0.1:8000/account/";
+
+    const [loginData, setLoginData] = useState({
+        client_id: "",
+        password: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setLoginData((prevValues) => ({
+            ...prevValues,
+            [name]: value,
+        }));
+    };
+
+    async function getClient() {
+        try {
+            const response = await fetch(apiUrl + "get_client_details/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(loginData),
+            });
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        let dummyClient = {
-            client_id: "1234567890",
-            first_name: "John",
-            last_name: "Doe",
-            email: "john.doe@gmail.com",
-            phone: "1234567890",
-            password: "password",
-            dob: "01/01/2000",
-            client_identification_document_type: "Passport",
-            client_identification_document_number: "AB123456789",
-            residency: "Citizen",
-            address: "123 Main St, Springfield, IL 62701",
-            occupation: "Software Engineer",
-            nominee_name: "Jane Doe",
-            nominee_identification_document_type: "Passport",
-            nominee_identification_document_number: "CD123456789",
-            nominee_relation: "Spouse",
-            branch_id: "101",
-            product_id: "801",
-        };
-        onLogin(dummyClient);
+        try {
+            let clientData = await getClient();
+            onLogin(clientData);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
@@ -37,6 +58,7 @@ function ClientLogin({ onLogin }) {
                         id="login_client_id"
                         type="text"
                         name="client_id"
+                        onChange={handleChange}
                         className="rounded-md border text-lg p-1"
                     />
                 </div>
@@ -46,6 +68,7 @@ function ClientLogin({ onLogin }) {
                         id="login_password"
                         type="password"
                         name="password"
+                        onChange={handleChange}
                         className="rounded-md border text-lg p-1"
                     />
                 </div>
