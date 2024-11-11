@@ -5,7 +5,7 @@ def calculate_balance_after_transaction(current_balance, amount, transaction_typ
         return current_balance - amount
 def test_transaction_debit():
     calculated_amount = calculate_balance_after_transaction(1000, 500, 'debit')
-    assert calculated_amount == 500
+    assert calculated_amount == 400
 
 def test_transaction_debit2():
     calculated_amount = calculate_balance_after_transaction(800, 500, 'debit')
