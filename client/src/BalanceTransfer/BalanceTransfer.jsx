@@ -1,12 +1,9 @@
-import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import ClientLogin from "../ClientLogin";
-import ClientProfile from "./ClientProfile";
-import Accounts from "./Accounts";
+import TransferForm from "./TransferForm";
 
-function ClientInfo() {
-    const location = useLocation();
-    const [client, setClient] = useState(location.state?.client || null);
+function BalanceTransfer() {
+    const [client, setClient] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(client ? true : false);
 
     const handleLogin = (clientData) => {
@@ -17,9 +14,8 @@ function ClientInfo() {
     return (
         <div>
             {isLoggedIn ? (
-                <div className="flex justify-evenly p-4">
-                    <ClientProfile client={client} />
-                    <Accounts
+                <div className="flex justify-center p-4">
+                    <TransferForm
                         client_id={client.client_id}
                         password={client.password}
                     />
@@ -31,4 +27,4 @@ function ClientInfo() {
     );
 }
 
-export default ClientInfo;
+export default BalanceTransfer;
