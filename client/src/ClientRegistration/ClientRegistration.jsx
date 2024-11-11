@@ -499,7 +499,7 @@ function ClientRegistration() {
                                 onChange={handleChange}
                                 className="rounded-md border text-lg p-1"
                             >
-                                <option value="" />
+                                <option value="">Select a type</option>
                                 {identification.map((document, index) => (
                                     <option key={index} value={document}>
                                         {document}

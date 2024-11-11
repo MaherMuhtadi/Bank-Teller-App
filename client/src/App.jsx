@@ -3,6 +3,7 @@ import NavBar from "./NavBar";
 import Dashboard from "./Dashboard/Dashboard";
 import ClientRegistration from "./ClientRegistration/ClientRegistration";
 import ClientInfo from "./ClientInfo/ClientInfo";
+import BalanceTransfer from "./BalanceTransfer/BalanceTransfer";
 
 const router = createBrowserRouter([
     {
@@ -39,7 +40,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/transfer",
-        element: <Dashboard />,
+        element: <BalanceTransfer />,
     },
     {
         path: "/cash",
