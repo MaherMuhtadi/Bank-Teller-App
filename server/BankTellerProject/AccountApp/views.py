@@ -1,116 +1,200 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import JSONParser
 import json
 import random
-from .serializers import ClientSerializer, BankAccountSerializer
-from .models import Client, BankAccount
+from .serializers import ClientSerializer, AccountSerializer, BranchSerializer, BranchDropDownSerializer, ProductDropDownSerializer, CreateClientSerializer, TransactionSerializer
+from .models import Client, Account, Branch, Product, Transaction, Teller, Schedule
+from datetime import datetime
 # Create your views here.
 
-def account_list(request):
-    accounts = BankAccount.objects.all()
-    serializer = BankAccountSerializer(accounts, many=True)
+@csrf_exempt
+def get_branch_list(request):
+    branches = Branch.objects.all()
+    serializer = BranchDropDownSerializer(branches, many=True)
+    return JsonResponse(serializer.data, safe=False)
+@csrf_exempt
+def get_product_list(request):
+    products = Product.objects.all()
+    serializer = ProductDropDownSerializer(products, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 @csrf_exempt
-def create_newClient(request):
+def create_new_client(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        firstname = data.get('firstname')
-        lastname = data.get('lastname')
-        occupation = data.get('occupation')
-        address = data.get('address')
-        email = data.get('email')
-        phone = data.get('phone')
-        nominee = data.get('nominee')
+        data = JSONParser().parse(request)
+        serializer = CreateClientSerializer(data=data)
+        if serializer.is_valid():
+            # Generate a unique 10-digit client_id
+            while True:
+                client_id = str(random.randint(1000000000, 9999999999))
+                if not Client.objects.filter(client_id=client_id).exists():
+                    break
+            serializer.save(client_id=client_id)
+            response_data = {
+            'client_id': client_id
+        }
+            return JsonResponse(response_data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
 
-        # Generate a unique 9-digit client ID
-        client_id = str(random.randint(100000000000, 999999999999))
+@csrf_exempt
+def get_client_details(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        client_id = data.get('client_id')
+        password = data.get('password')
 
-        
-        # Fetch all existing client IDs
-        existing_client_ids = set(Client.objects.values_list('client_id', flat=True))
+        try:
+            client = Client.objects.get(client_id=client_id, password=password)
+        except Client.DoesNotExist:
+            return JsonResponse({'error': 'Invalid client_id or password'}, status=400)
 
-        # Generate a unique 12-digit client ID
+        serializer = ClientSerializer(client)
+        return JsonResponse(serializer.data, safe=False, status=200)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def create_new_account(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        client_id = data.get('client_id')
+        product_id = data.get('product_id')
+
+        # Check if the client and product exist
+        try:
+            client = Client.objects.get(client_id=client_id)
+            product = Product.objects.get(product_id=product_id)
+        except (Client.DoesNotExist, Product.DoesNotExist):
+            return JsonResponse({'error': 'Invalid client_id or product_id'}, status=400)
+        # Generate a unique 9-digit account_id
         while True:
-            client_id = str(random.randint(100000000000, 999999999999))
-            if client_id not in existing_client_ids:
+            account_id = str(random.randint(100000000, 999999999))
+            if not Account.objects.filter(account_id=account_id).exists():
                 break
 
-        # Create a new Client object
-        client = Client(
-            client_id=client_id,
-            firstname=firstname,
-            lastname=lastname,
-            occupation=occupation,
-            address=address,
-            email=email,
-            phone=phone,
-            nominee=nominee
+        # Create a new Account object
+        account = Account(
+            account_id=account_id,
+            client_id=client,
+            product_id=product,
+            balance=0
         )
 
-        # Save the Client object to the database
-        client.save()
+        # Save the Account object to the database
+        account.save()
+
+        # Prepare the JSON response
         response_data = {
-            'client_id': client_id,
-            'user_name': f"{firstname} {lastname}"
+            'account_id': account.account_id
         }
 
         return JsonResponse(response_data, status=201)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def get_account_list_for_a_client(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        client_id = data.get('client_id')
+        password = data.get('password')
+
+        try:
+            client = Client.objects.get(client_id=client_id, password=password)
+        except Client.DoesNotExist:
+            return JsonResponse({'error': 'Invalid client_id or password'}, status=400)
+
+        accounts = Account.objects.filter(client_id=client)
+        serializer = AccountSerializer(accounts, many=True)
+        return JsonResponse(serializer.data, safe=False, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
 @csrf_exempt
-def create_newAccount(request):
+def create_transaction(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        client = data.get('client')
-        account_type = data.get('account_type')
-        branch = data.get('branch')
+        data = JSONParser().parse(request)
+        transaction_type = data.get('transaction_type')
+        from_account_id = data.get('from_account_id')
+        to_account_id = data.get('to_account_id')
+        amount = data.get('amount')
 
-        # Check if the client exists
+        # Check if the from_account and to_account exist
         try:
-            client = Client.objects.get(client_id=client)
-        except Client.DoesNotExist:
-            return JsonResponse({'error': 'Client does not exist'}, status=404)
+            from_account = Account.objects.get(account_id=from_account_id)
+            to_account = Account.objects.get(account_id=to_account_id)
+        except Account.DoesNotExist:
+            return JsonResponse({'error': 'Invalid from_account_id or to_account_id'}, status=400)
 
-        
-        # Fetch all existing client IDs
-        existing_account_ids = set(BankAccount.objects.values_list('account_no', flat=True))
+        # Check if the from_account has sufficient balance
+        if from_account.balance < amount:
+            return JsonResponse({'error': 'Insufficient balance in your account to complete the transaction'}, status=400)
 
-        # Generate a unique 12-digit client ID
+        # Generate a unique 10-digit transaction_id
         while True:
-            account_no = str(random.randint(100000000, 999999999))
-            if account_no not in existing_account_ids:
+            transaction_id = str(random.randint(1000000000, 9999999999))
+            if not Transaction.objects.filter(transaction_id=transaction_id).exists():
                 break
 
-        # Create a new Client object
-        bankAccount = BankAccount(
-           account_no=account_no,
-            client=client,
-            account_type=account_type,
-            balance=0,
-            branch=branch
+        # Deduct the amount from from_account and add to to_account
+        from_account.balance -= amount
+        to_account.balance += amount
+
+        # Save the updated account balances
+        from_account.save()
+        to_account.save()
+
+        # Create a new Transaction object
+        transaction = Transaction(
+            transaction_id=transaction_id,
+            transaction_type=transaction_type,
+            from_account_id=from_account,
+            to_account_id=to_account,
+            amount=amount,
+            timestamp=datetime.now()
         )
 
-        # Save the Client object to the database
-        bankAccount.save()
+        # Save the Transaction object to the database
+        transaction.save()
+
+        # Prepare the JSON response
+        transaction_serializer = TransactionSerializer(transaction)
+        from_account_serializer = AccountSerializer(from_account)
+        to_account_serializer = AccountSerializer(to_account)
+
         response_data = {
-            'account_no': account_no,
-            'nameOfAccount': f"{client.firstname} {client.lastname}"
+            'transaction_id': transaction.transaction_id,
+            'from_account': from_account_serializer.data,
+            'to_account': to_account_serializer.data,
+            'transaction_details': transaction_serializer.data
         }
 
         return JsonResponse(response_data, status=201)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def get_all_transactions(request):
+    if request.method == 'GET':
+        try:
+            transactions = Transaction.objects.all()
+            serializer = TransactionSerializer(transactions, many=True)
+            return JsonResponse(serializer.data, safe=False, status=200)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 def calculate_balance_after_transaction(current_balance, amount, transaction_type):
     if transaction_type=='credit':
         return current_balance + amount
     elif transaction_type=='debit':
         return current_balance - amount
-
+ 
 @csrf_exempt
 def depositMoney(request):
     if request.method == 'POST':
@@ -121,8 +205,8 @@ def depositMoney(request):
 
         # Check if the account exists
         try:
-            account = BankAccount.objects.get(account_no=account_no)
-        except BankAccount.DoesNotExist:
+            account = Account.objects.get(account_no=account_no)
+        except Account.DoesNotExist:
             return JsonResponse({'error': 'Account does not exist'}, status=404)
 
         # Add the amount to the account balance
@@ -142,7 +226,6 @@ def depositMoney(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
-
 @csrf_exempt
 def withdrawMoney(request):
     if request.method == 'POST':
@@ -153,8 +236,8 @@ def withdrawMoney(request):
 
         # Check if the account exists
         try:
-            account = BankAccount.objects.get(account_no=account_no)
-        except BankAccount.DoesNotExist:
+            account = Account.objects.get(account_no=account_no)
+        except Account.DoesNotExist:
             return JsonResponse({'error': 'Account does not exist'}, status=404)
 
         # Check if the account has sufficient balance

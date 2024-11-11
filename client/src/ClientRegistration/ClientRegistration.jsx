@@ -1,19 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function ClientRegistration() {
+    const apiUrl = "http://127.0.0.1:8000/account/";
+    const [branchesLoading, setBranchesLoading] = useState(true);
+    const [productsLoading, setProductsLoading] = useState(true);
+    const [error, setError] = useState(null);
+
     const residency = [
         "Citizen",
         "Permanent Resident",
         "Foreign Worker",
         "Foreign Student",
     ];
-    const branch = [
-        "2 Harwood Ave S, Ajax",
-        "43 Conlin Rd E, Oshawa",
-        "714 Rossland Rd E, Whitby",
-    ];
-    const accountType = ["Chequing", "Savings"];
+    const identification = ["Passport", "Driver's License", "Health Card"];
     const [formValues, setFormValues] = useState({
         first_name: "",
         last_name: "",
@@ -22,14 +22,90 @@ function ClientRegistration() {
         phone: "",
         occupation: "",
         dob: "",
+        client_identification_document_type: identification[0],
+        client_identification_document_number: "",
         residency: residency[0],
         address: "",
         city: "",
         province: "",
         zip: "",
-        branch: branch[0],
-        account_type: accountType[0],
+        nominee_name: "",
+        nominee_relation: "",
+        nominee_identification_document_type: "",
+        nominee_identification_document_number: "",
+        branch_id: "", // Set once branches are loaded
+        product_id: "", // Set once products are loaded
     });
+    const [branches, setBranches] = useState([]);
+    const [products, setProducts] = useState([]);
+
+    async function getBranches() {
+        try {
+            const response = await fetch(apiUrl + "get_branch_list/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+            const data = await response.json();
+            setBranches(data);
+        } catch (error) {
+            setError(error.message); // Set error if any occurs
+            console.error("Error fetching branches:", error);
+        } finally {
+            setBranchesLoading(false); // Set loading to false once done
+        }
+    }
+
+    async function getProducts() {
+        try {
+            const response = await fetch(apiUrl + "get_product_list/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+            const data = await response.json();
+            setProducts(data);
+        } catch (error) {
+            setError(error.message); // Set error if any occurs
+            console.error("Error fetching products:", error);
+        } finally {
+            setProductsLoading(false); // Set loading to false once done
+        }
+    }
+
+    useEffect(() => {
+        getBranches();
+        getProducts();
+    }, []); // Empty dependency array to run only once when the component mounts
+
+    // Update branch_id once branches are loaded
+    useEffect(() => {
+        if (branches.length > 0) {
+            setFormValues((prevValues) => ({
+                ...prevValues,
+                branch_id: branches[0].branch_id,
+            }));
+        }
+    }, [branches]); // Run only when branches are updated
+
+    // Update product_id once products are loaded
+    useEffect(() => {
+        if (Object.keys(products).length > 0) {
+            setFormValues((prevValues) => ({
+                ...prevValues,
+                product_id: Object.keys(products)[0],
+            }));
+        }
+    }, [products]); // Run only when products are updated
+
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -40,24 +116,111 @@ function ClientRegistration() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleNominee = (e) => {
+        if (e.target.checked) {
+            document.getElementById("nominee_fields").className =
+                "flex flex-col space-y-5";
+        } else {
+            document.getElementById("nominee_fields").className = "hidden";
+        }
+    };
+
+    const createNewClient = async (clientData) => {
+        try {
+            const response = await fetch(apiUrl + "create_new_client/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(clientData),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            return data.client_id;
+        } catch (error) {
+            console.error("Error:", error);
+            throw error; // Rethrow the error so it can be handled by the caller
+        }
+    };
+
+    const createNewAccount = async (accountData) => {
+        try {
+            const response = await fetch(apiUrl + "create_new_account/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(accountData),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            return data.account_id;
+        } catch (error) {
+            console.error("Error:", error);
+            throw error; // Rethrow the error so it can be handled by the caller
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         let address = `${formValues.address}, ${formValues.city}, ${formValues.province}, ${formValues.zip}`;
         let client = {
             first_name: formValues.first_name,
             last_name: formValues.last_name,
-            occupation: formValues.occupation,
+            email: formValues.email,
+            phone: formValues.phone,
+            password: formValues.password,
             dob: formValues.dob,
+            client_identification_document_type:
+                formValues.client_identification_document_type,
+            client_identification_document_number:
+                formValues.client_identification_document_number,
             residency: formValues.residency,
             address: address,
-            email: formValues.email,
-            password: formValues.password,
-            phone: formValues.phone,
-            branch: formValues.branch,
-            account_type: formValues.account_type,
+            occupation: formValues.occupation,
+            nominee_name: formValues.nominee_name,
+            nominee_identification_document_type:
+                formValues.nominee_identification_document_type,
+            nominee_identification_document_number:
+                formValues.nominee_identification_document_number,
+            nominee_relation: formValues.nominee_relation,
+            branch_id: formValues.branch_id,
         };
-        navigate("/client_info", { state: { client } });
+        try {
+            let client_id = await createNewClient(client);
+            let account = {
+                client_id: client_id,
+                product_id: formValues.product_id,
+            };
+            await createNewAccount(account);
+            navigate("/client_info", {
+                state: {
+                    client: {
+                        ...client,
+                        client_id: client_id,
+                    },
+                },
+            });
+        } catch (error) {
+            setError(error.message);
+        }
     };
+
+    if (branchesLoading || productsLoading) {
+        return <div className="flex justify-center">Loading...</div>; // Show loading message while data is being fetched
+    }
+
+    if (error) {
+        return <div className="flex justify-center">{error}</div>; // Display any error that occurs
+    }
 
     return (
         <div className="flex justify-center h-full p-4">
@@ -65,7 +228,11 @@ function ClientRegistration() {
                 onSubmit={handleSubmit}
                 className="flex flex-col space-y-5 w-1/3 min-w-fit"
             >
-                <h2 className="font-bold text-center">New Client</h2>
+                <h2 className="font-bold text-xl text-center">New Client</h2>
+
+                <h3 className="font-bold text-lg italic">
+                    Profile Information
+                </h3>
 
                 <div className="flex justify-between space-x-6">
                     <div className="flex flex-col space-y-5 w-1/2">
@@ -133,6 +300,24 @@ function ClientRegistration() {
                         />
                     </div>
                     <div className="flex flex-col space-y-5 w-1/2">
+                        <label htmlFor="registration_dob">Date of Birth</label>
+                        <input
+                            type="date"
+                            id="registration_dob"
+                            name="dob"
+                            value={formValues.dob}
+                            onChange={handleChange}
+                            className="rounded-md border text-lg p-1"
+                        />
+                    </div>
+                </div>
+
+                <h3 className="font-bold text-lg italic">
+                    Background Information
+                </h3>
+
+                <div className="flex justify-between space-x-6">
+                    <div className="flex flex-col space-y-5 w-1/2">
                         <label htmlFor="registration_occupation">
                             Occupation
                         </label>
@@ -141,20 +326,6 @@ function ClientRegistration() {
                             id="registration_occupation"
                             name="occupation"
                             value={formValues.occupation}
-                            onChange={handleChange}
-                            className="rounded-md border text-lg p-1"
-                        />
-                    </div>
-                </div>
-
-                <div className="flex justify-between space-x-6">
-                    <div className="flex flex-col space-y-5 w-1/2">
-                        <label htmlFor="registration_dob">Date of Birth</label>
-                        <input
-                            type="date"
-                            id="registration_dob"
-                            name="dob"
-                            value={formValues.dob}
                             onChange={handleChange}
                             className="rounded-md border text-lg p-1"
                         />
@@ -176,6 +347,45 @@ function ClientRegistration() {
                                 </option>
                             ))}
                         </select>
+                    </div>
+                </div>
+
+                <div className="flex justify-between space-x-6">
+                    <div className="flex flex-col space-y-5 w-1/2">
+                        <label htmlFor="registration_client_identification_document_type">
+                            Government ID Type
+                        </label>
+                        <select
+                            id="registration_client_identification_document_type"
+                            name="client_identification_document_type"
+                            value={
+                                formValues.client_identification_document_type
+                            }
+                            onChange={handleChange}
+                            className="rounded-md border text-lg p-1"
+                        >
+                            {identification.map((document, index) => (
+                                <option key={index} value={document}>
+                                    {document}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="flex flex-col space-y-5 w-1/2">
+                        <label htmlFor="registration_client_identification_document_number">
+                            Government ID Number
+                        </label>
+                        <input
+                            type="text"
+                            id="registration_client_identification_document_number"
+                            name="client_identification_document_number"
+                            value={
+                                formValues.client_identification_document_number
+                            }
+                            onChange={handleChange}
+                            className="rounded-md border text-lg p-1"
+                        />
                     </div>
                 </div>
 
@@ -231,18 +441,109 @@ function ClientRegistration() {
                     </div>
                 </div>
 
+                <h3 className="font-bold text-lg italic">
+                    Nominee Information
+                </h3>
+                <label
+                    htmlFor="registration_nominee"
+                    className="flex space-x-6"
+                >
+                    <p>Add Nominee</p>
+                    <input
+                        type="checkbox"
+                        id="registration_nominee"
+                        onClick={handleNominee}
+                    />
+                </label>
+
+                <div id="nominee_fields" className="hidden">
+                    <div className="flex justify-between space-x-6">
+                        <div className="flex flex-col space-y-5 w-1/2">
+                            <label htmlFor="registration_nominee_name">
+                                Name
+                            </label>
+                            <input
+                                type="text"
+                                id="registration_nominee_name"
+                                name="nominee_name"
+                                value={formValues.nominee_name}
+                                onChange={handleChange}
+                                className="rounded-md border text-lg p-1"
+                            />
+                        </div>
+                        <div className="flex flex-col space-y-5 w-1/2">
+                            <label htmlFor="registration_nominee_relation">
+                                Relationship
+                            </label>
+                            <input
+                                type="text"
+                                id="registration_nominee_relation"
+                                name="nominee_relation"
+                                value={formValues.nominee_relation}
+                                onChange={handleChange}
+                                className="rounded-md border text-lg p-1"
+                            />
+                        </div>
+                    </div>
+                    <div className="flex justify-between space-x-6">
+                        <div className="flex flex-col space-y-5 w-1/2">
+                            <label htmlFor="registration_nominee_identification_document_type">
+                                Government ID Type
+                            </label>
+                            <select
+                                id="registration_nominee_identification_document_type"
+                                name="nominee_identification_document_type"
+                                value={
+                                    formValues.nominee_identification_document_type
+                                }
+                                onChange={handleChange}
+                                className="rounded-md border text-lg p-1"
+                            >
+                                <option value="">Select a type</option>
+                                {identification.map((document, index) => (
+                                    <option key={index} value={document}>
+                                        {document}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex flex-col space-y-5 w-1/2">
+                            <label htmlFor="registration_nominee_identification_document_number">
+                                Government ID Number
+                            </label>
+                            <input
+                                type="text"
+                                id="registration_nominee_identification_document_number"
+                                name="nominee_identification_document_number"
+                                value={
+                                    formValues.nominee_identification_document_number
+                                }
+                                onChange={handleChange}
+                                className="rounded-md border text-lg p-1"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <h3 className="font-bold text-lg italic">
+                    Account Information
+                </h3>
+
                 <div className="flex flex-col space-y-5">
                     <label htmlFor="registration_branch">Branch</label>
                     <select
                         id="registration_branch"
-                        name="branch"
-                        value={formValues.branch}
+                        name="branch_id"
+                        value={formValues.branch_id}
                         onChange={handleChange}
                         className="rounded-md border text-lg p-1"
                     >
-                        {branch.map((branch, index) => (
-                            <option key={index} value={branch}>
-                                {branch}
+                        {branches.map((branchItem) => (
+                            <option
+                                key={branchItem.branch_id}
+                                value={branchItem.branch_id}
+                            >
+                                {branchItem.branch_name}
                             </option>
                         ))}
                     </select>
@@ -254,14 +555,17 @@ function ClientRegistration() {
                     </label>
                     <select
                         id="registration_account_type"
-                        name="account_type"
-                        value={formValues.account_type}
+                        name="product_id"
+                        value={formValues.product_id}
                         onChange={handleChange}
                         className="rounded-md border text-lg p-1"
                     >
-                        {accountType.map((type, index) => (
-                            <option key={index} value={type}>
-                                {type}
+                        {products.map((productItem) => (
+                            <option
+                                key={productItem.product_id}
+                                value={productItem.product_id}
+                            >
+                                {productItem.product_name}
                             </option>
                         ))}
                     </select>
