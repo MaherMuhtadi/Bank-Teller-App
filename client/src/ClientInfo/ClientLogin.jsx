@@ -1,21 +1,48 @@
+import { useState } from "react";
+
 function ClientLogin({ onLogin }) {
-    const handleSubmit = (e) => {
+    const apiUrl = "http://127.0.0.1:8000/account/";
+
+    const [loginData, setLoginData] = useState({
+        client_id: "",
+        password: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setLoginData((prevValues) => ({
+            ...prevValues,
+            [name]: value,
+        }));
+    };
+
+    async function getClient() {
+        try {
+            const response = await fetch(apiUrl + "get_client_details/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(loginData),
+            });
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        let dummyClient = {
-            firstname: "John",
-            lastname: "Doe",
-            occupation: "Worker",
-            dob: "01/01/1990",
-            residency: "Citizen",
-            address: "1234 Elm St",
-            email: "JohnDoe@gmail.com",
-            password: "password",
-            phone: "123-456-7890",
-            nominee: "Jane Doe",
-            branch: "Downtown",
-            account_type: "Checking",
-        };
-        onLogin(dummyClient);
+        try {
+            let clientData = await getClient();
+            onLogin(clientData);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
@@ -24,13 +51,14 @@ function ClientLogin({ onLogin }) {
                 className="flex flex-col space-y-5 w-1/2 min-w-fit"
                 onSubmit={handleSubmit}
             >
-                <h2 className="font-bold text-center">Client Login</h2>
+                <h2 className="font-bold text-xl text-center">Client Login</h2>
                 <div className="flex flex-col space-y-5">
                     <label htmlFor="login_client_id">Client ID:</label>
                     <input
                         id="login_client_id"
                         type="text"
                         name="client_id"
+                        onChange={handleChange}
                         className="rounded-md border text-lg p-1"
                     />
                 </div>
@@ -40,6 +68,7 @@ function ClientLogin({ onLogin }) {
                         id="login_password"
                         type="password"
                         name="password"
+                        onChange={handleChange}
                         className="rounded-md border text-lg p-1"
                     />
                 </div>

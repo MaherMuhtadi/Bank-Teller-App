@@ -2,7 +2,7 @@ function Agenda() {
     return (
         <div className="flex w-1/4 relative">
             <div className="rounded-xl bg-neutral-50 w-full p-4 mt-16 shadow-md">
-                <h2 className="font-bold text-right">My Agenda</h2>
+                <h2 className="font-bold text-xl text-right">My Agenda</h2>
             </div>
             <a href="/profile">
                 <img
@@ -12,7 +12,9 @@ function Agenda() {
                 />
             </a>
             <div className="absolute top-0 left-32 right-0 flex flex-col h-16 justify-center">
-                <h2 className="font-bold italic text-center">Hello, John!</h2>
+                <h3 className="font-bold text-lg italic text-center">
+                    Hello, John!
+                </h3>
             </div>
         </div>
     );

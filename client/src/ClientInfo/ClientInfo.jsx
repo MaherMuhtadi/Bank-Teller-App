@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import ClientLogin from "./ClientLogin";
 import ClientProfile from "./ClientProfile";
+import Accounts from "./Accounts";
 
 function ClientInfo() {
     const location = useLocation();
@@ -16,7 +17,13 @@ function ClientInfo() {
     return (
         <div>
             {isLoggedIn ? (
-                <ClientProfile client={client} />
+                <div className="flex justify-evenly p-4">
+                    <ClientProfile client={client} />
+                    <Accounts
+                        client_id={client.client_id}
+                        password={client.password}
+                    />
+                </div>
             ) : (
                 <ClientLogin onLogin={handleLogin} />
             )}
