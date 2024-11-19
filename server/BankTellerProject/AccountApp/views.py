@@ -205,12 +205,12 @@ def depositMoney(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         # clientId = data.get('client_id')
-        account_no = data.get('account_no')
+        account_id = data.get('account_no')
         amount = data.get('amount')
 
         # Check if the account exists
         try:
-            account = Account.objects.get(account_no=account_no)
+            account = Account.objects.get(account_id=account_id)
         except Account.DoesNotExist:
             return JsonResponse({'error': 'Account does not exist'}, status=404)
 
@@ -239,7 +239,7 @@ def depositMoney(request):
 
         # Return a JSON response with the updated balance and transaction details
         response_data = {
-            'account_no': account_no,
+            'account_no': account_id,
             'updated_balance': account.balance,
             'transaction_id': transaction.transaction_id,
             'transaction_type': transaction.transaction_type,
@@ -256,12 +256,12 @@ def withdrawMoney(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         # clientId = data.get('client_id')
-        account_no = data.get('account_no')
+        account_id = data.get('account_no')
         amount = data.get('amount')
 
         # Check if the account exists
         try:
-            account = Account.objects.get(account_no=account_no)
+            account = Account.objects.get(account_id=account_id)
         except Account.DoesNotExist:
             return JsonResponse({'error': 'Account does not exist'}, status=404)
 
@@ -293,7 +293,7 @@ def withdrawMoney(request):
 
         # Return a JSON response with the updated balance and transaction details
         response_data = {
-            'account_no': account_no,
+            'account_no': account_id,
             'updated_balance': account.balance,
             'transaction_id': transaction.transaction_id,
             'transaction_type': transaction.transaction_type,

@@ -15,6 +15,6 @@ urlpatterns = [
     path("employee_login/", views.employee_login),
     path("create_employee/", views.create_teller),
 
-    path("deposite/", views.depositMoney),
+    path("deposit/", views.depositMoney),
     path("withdraw/", views.withdrawMoney),
 ]
