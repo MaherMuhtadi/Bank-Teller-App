@@ -55,7 +55,7 @@ def get_client_details(request):
 
         serializer = ClientSerializer(client)
         response_data = serializer.data
-        response_data.pop('password', None)  # Remove the password field from the response
+        # response_data.pop('password', None)  # Remove the password field from the response
         return JsonResponse(response_data, safe=False, status=200)
 
 
