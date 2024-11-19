@@ -5,12 +5,14 @@ import ProfileInformation from "./ProfileInformation";
 import BackgroundInformation from "./BackgroundInformation";
 import NomineeInformation from "./NomineeInformation";
 import AccountInformation from "./AccountInformation";
+import ErrorAlert from "../Components/ErrorAlert";
 
 function ClientRegistration() {
     const apiUrl = "http://127.0.0.1:8000/account/";
     const [branchesLoading, setBranchesLoading] = useState(true);
     const [productsLoading, setProductsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [fetchError, setFetchError] = useState(null);
+    const [submissionError, setSubmissionError] = useState(null);
 
     const residency = [
         "Citizen",
@@ -53,13 +55,13 @@ function ClientRegistration() {
                 },
             });
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || response.statusText);
             }
             const data = await response.json();
             setBranches(data);
         } catch (error) {
-            setError(error.message); // Set error if any occurs
-            console.error("Error fetching branches:", error);
+            throw new Error(error.message); // Rethrow the error so it can be handled by the caller
         } finally {
             setBranchesLoading(false); // Set loading to false once done
         }
@@ -74,21 +76,25 @@ function ClientRegistration() {
                 },
             });
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || response.statusText);
             }
             const data = await response.json();
             setProducts(data);
         } catch (error) {
-            setError(error.message); // Set error if any occurs
-            console.error("Error fetching products:", error);
+            throw new Error(error.message); // Rethrow the error so it can be handled by the caller
         } finally {
             setProductsLoading(false); // Set loading to false once done
         }
     }
 
     useEffect(() => {
-        getBranches();
-        getProducts();
+        try {
+            getBranches();
+            getProducts();
+        } catch (error) {
+            setFetchError(error.message);
+        }
     }, []); // Empty dependency array to run only once when the component mounts
 
     // Update branch_id once branches are loaded
@@ -113,14 +119,6 @@ function ClientRegistration() {
 
     const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormValues((prevValues) => ({
-            ...prevValues,
-            [name]: value,
-        }));
-    };
-
     const handleNominee = (e) => {
         if (e.target.checked) {
             document.getElementById("nominee_fields").className =
@@ -141,14 +139,14 @@ function ClientRegistration() {
             });
 
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || response.statusText);
             }
 
             const data = await response.json();
             return data.client_id;
         } catch (error) {
-            console.error("Error:", error);
-            throw error; // Rethrow the error so it can be handled by the caller
+            throw new Error(error.message); // Rethrow the error so it can be handled by the caller
         }
     };
 
@@ -163,14 +161,14 @@ function ClientRegistration() {
             });
 
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || response.statusText);
             }
 
             const data = await response.json();
             return data.account_id;
         } catch (error) {
-            console.error("Error:", error);
-            throw error; // Rethrow the error so it can be handled by the caller
+            throw new Error(error.message); // Rethrow the error so it can be handled by the caller
         }
     };
 
@@ -215,7 +213,7 @@ function ClientRegistration() {
                 },
             });
         } catch (error) {
-            setError(error.message);
+            setSubmissionError(error.message);
         }
     };
 
@@ -223,8 +221,8 @@ function ClientRegistration() {
         return <LoadingAnimation />; // Show loading message while data is being fetched
     }
 
-    if (error) {
-        return <div className="flex justify-center">{error}</div>; // Display any error that occurs
+    if (fetchError) {
+        return <ErrorAlert error={fetchError} />; // Show error message if data fetching fails
     }
 
     return (
@@ -234,6 +232,8 @@ function ClientRegistration() {
                 className="flex flex-col space-y-5 w-1/3 min-w-fit"
             >
                 <h2 className="font-bold text-xl text-center">New Client</h2>
+
+                {submissionError && <ErrorAlert error={submissionError} />}
 
                 <ProfileInformation
                     formValues={formValues}

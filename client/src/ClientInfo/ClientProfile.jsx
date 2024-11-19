@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import LoadingAnimation from "../Components/LoadingAnimation";
+import ErrorAlert from "../Components/ErrorAlert";
 
 function ClientProfile({ client }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
     const [branchesLoading, setBranchesLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [fetchError, setFetchError] = useState(null);
 
     const [branches, setBranches] = useState([]);
 
@@ -17,28 +18,32 @@ function ClientProfile({ client }) {
                 },
             });
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || response.statusText);
             }
             const data = await response.json();
             setBranches(data);
         } catch (error) {
-            setError(error.message); // Set error if any occurs
-            console.error("Error fetching branches:", error);
+            throw new Error(error.message);
         } finally {
             setBranchesLoading(false); // Set loading to false once done
         }
     }
 
     useEffect(() => {
-        getBranches();
+        try {
+            getBranches();
+        } catch (error) {
+            setFetchError(error.message);
+        }
     }, []); // Empty dependency array to run only once when the component mounts
 
     if (branchesLoading) {
         return <LoadingAnimation />; // Show loading message while data is being fetched
     }
 
-    if (error) {
-        return <div className="flex justify-center">{error}</div>; // Display any error that occurs
+    if (fetchError) {
+        return <ErrorAlert error={fetchError} />; // Display any error that occurs
     }
 
     return (

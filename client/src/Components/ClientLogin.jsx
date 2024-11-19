@@ -1,7 +1,9 @@
 import { useState } from "react";
+import ErrorAlert from "./ErrorAlert";
 
 function ClientLogin({ onLogin }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
+    const [submissionError, setSubmissionError] = useState(null);
 
     const [loginData, setLoginData] = useState({
         client_id: "",
@@ -25,13 +27,16 @@ function ClientLogin({ onLogin }) {
                 },
                 body: JSON.stringify(loginData),
             });
+
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || response.statusText);
             }
+
             const data = await response.json();
             return data;
         } catch (error) {
-            throw error;
+            throw new Error(error.message);
         }
     }
 
@@ -41,7 +46,7 @@ function ClientLogin({ onLogin }) {
             let clientData = await getClient();
             onLogin(clientData);
         } catch (error) {
-            console.error(error);
+            setSubmissionError(error.message);
         }
     };
 
@@ -52,6 +57,9 @@ function ClientLogin({ onLogin }) {
                 onSubmit={handleSubmit}
             >
                 <h2 className="font-bold text-xl text-center">Client Login</h2>
+
+                {submissionError && <ErrorAlert error={submissionError} />}
+
                 <div className="flex flex-col space-y-5">
                     <label htmlFor="login_client_id">Client ID:</label>
                     <input
