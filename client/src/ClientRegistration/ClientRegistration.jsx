@@ -101,7 +101,7 @@ function ClientRegistration() {
         if (products.length > 0) {
             setFormValues((prevValues) => ({
                 ...prevValues,
-                branch_id: products[0].branch_id,
+                product_id: products[0].product_id,
             }));
         }
     }, [products]); // Run only when products are updated
