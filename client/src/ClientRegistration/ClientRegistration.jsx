@@ -89,13 +89,15 @@ function ClientRegistration() {
     }
 
     useEffect(() => {
-        try {
-            getBranches();
-            getProducts();
-        } catch (error) {
-            setFetchError(error.message);
-        }
-    }, []); // Empty dependency array to run only once when the component mounts
+        const fetchData = async () => {
+            try {
+                await Promise.all([getBranches(), getProducts()]);
+            } catch (error) {
+                setFetchError(error.message);
+            }
+        };
+        fetchData();
+    }, []); // Run only once when the component mounts
 
     // Update branch_id once branches are loaded
     useEffect(() => {

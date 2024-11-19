@@ -75,12 +75,15 @@ function TransferForm({ client_id, password }) {
     };
 
     useEffect(() => {
-        try {
-            getAccounts();
-            getProducts();
-        } catch (error) {
-            setFetchError(error.message);
-        }
+        const fetchData = async () => {
+            try {
+                await Promise.all([getAccounts(), getProducts()]);
+            } catch (error) {
+                setFetchError(error.message);
+            }
+        };
+
+        fetchData();
     }, []); // Empty dependency array to run only once when the component mounts
 
     const transferAmount = async () => {

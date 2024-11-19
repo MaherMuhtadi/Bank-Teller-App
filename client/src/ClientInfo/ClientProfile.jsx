@@ -31,12 +31,15 @@ function ClientProfile({ client }) {
     }
 
     useEffect(() => {
-        try {
-            getBranches();
-        } catch (error) {
-            setFetchError(error.message);
-        }
-    }, []); // Empty dependency array to run only once when the component mounts
+        const fetchBranches = async () => {
+            try {
+                await getBranches();
+            } catch (error) {
+                setFetchError(error.message);
+            }
+        };
+        fetchBranches();
+    }, []); // Run only once when the component mounts
 
     if (branchesLoading) {
         return <LoadingAnimation />; // Show loading message while data is being fetched
