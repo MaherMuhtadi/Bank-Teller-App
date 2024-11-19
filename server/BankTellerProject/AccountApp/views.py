@@ -348,3 +348,14 @@ def create_teller(request):
         
         return JsonResponse(serializer.errors, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+@csrf_exempt
+def transactionList(request):
+    if request.method == 'GET':
+        transactions = Transaction.objects.all()
+        serializer = TransactionSerializer(transactions, many=True)
+        return JsonResponse(serializer.data, safe=False, status=200)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+    
