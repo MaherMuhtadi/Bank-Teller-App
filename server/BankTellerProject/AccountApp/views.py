@@ -204,7 +204,7 @@ def calculate_balance_after_transaction(current_balance, amount, transaction_typ
 def depositMoney(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        clientId = data.get('client_id')
+        # clientId = data.get('client_id')
         account_no = data.get('account_no')
         amount = data.get('amount')
 
@@ -220,11 +220,31 @@ def depositMoney(request):
 
         # Save the updated account balance
         account.save()
+         
+         # Generate a unique transaction_id
+        while True:
+            transaction_id = str(random.randint(1000000000, 9999999999))
+            if not Transaction.objects.filter(transaction_id=transaction_id).exists():
+                break
 
-        # Return a JSON response with the updated balance
+        transaction = Transaction(
+            transaction_id=transaction_id,
+            transaction_type='Deposit',
+            to_account_id=account,
+            amount=amount,
+            timestamp=datetime.now()
+        )
+        # Save the Transaction object to the database
+        transaction.save()
+
+        # Return a JSON response with the updated balance and transaction details
         response_data = {
             'account_no': account_no,
-            'updated_balance': account.balance
+            'updated_balance': account.balance,
+            'transaction_id': transaction.transaction_id,
+            'transaction_type': transaction.transaction_type,
+            'amount': transaction.amount,
+            'timestamp': transaction.timestamp
         }
 
         return JsonResponse(response_data, status=200)
@@ -255,13 +275,31 @@ def withdrawMoney(request):
 
         # Save the updated account balance
         account.save()
+         # Generate a unique transaction_id
+        while True:
+            transaction_id = str(random.randint(1000000000, 9999999999))
+            if not Transaction.objects.filter(transaction_id=transaction_id).exists():
+                break
 
-        # Return a JSON response with the updated balance
+        transaction = Transaction(
+            transaction_id=transaction_id,
+            transaction_type='Withdraw',
+            from_account_id=account,
+            amount=amount,
+            timestamp=datetime.now()
+        )
+        # Save the Transaction object to the database
+        transaction.save()
+
+        # Return a JSON response with the updated balance and transaction details
         response_data = {
             'account_no': account_no,
-            'updated_balance': account.balance
+            'updated_balance': account.balance,
+            'transaction_id': transaction.transaction_id,
+            'transaction_type': transaction.transaction_type,
+            'amount': transaction.amount,
+            'timestamp': transaction.timestamp
         }
-
         return JsonResponse(response_data, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
