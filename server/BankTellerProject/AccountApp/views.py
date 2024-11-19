@@ -54,7 +54,10 @@ def get_client_details(request):
             return JsonResponse({'error': 'Invalid client_id or password'}, status=400)
 
         serializer = ClientSerializer(client)
-        return JsonResponse(serializer.data, safe=False, status=200)
+        response_data = serializer.data
+        response_data.pop('password', None)  # Remove the password field from the response
+        return JsonResponse(response_data, safe=False, status=200)
+
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
@@ -278,7 +281,7 @@ def employee_login(request):
 
         # Validate the password
         if teller.check_password(password):
-            return JsonResponse({'message': 'Login successful'}, status=200)
+            return JsonResponse({'message': 'Login successful', 'employee_id': employee_id}, status=200)
         else:
             return JsonResponse({'error': 'Invalid email or password'}, status=400)
     
@@ -300,7 +303,10 @@ def create_teller(request):
 
         serializer = TellerSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()  # The password will be hashed automatically by the model
-            return JsonResponse(serializer.data, status=201)
+            teller = serializer.save()  # The password will be hashed automatically by the model
+            response_data = serializer.data
+            response_data.pop('password', None)  # Remove the password field from the response
+            return JsonResponse(response_data, status=201)
+        
         return JsonResponse(serializer.errors, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
