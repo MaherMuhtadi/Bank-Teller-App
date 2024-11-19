@@ -255,7 +255,7 @@ def depositMoney(request):
 def withdrawMoney(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        clientId = data.get('client_id')
+        # clientId = data.get('client_id')
         account_no = data.get('account_no')
         amount = data.get('amount')
 
