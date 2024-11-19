@@ -17,4 +17,7 @@ urlpatterns = [
 
     path("deposit/", views.depositMoney),
     path("withdraw/", views.withdrawMoney),
+
+    path("transactionList/", views.transactionList),
+    path("employeeList/", views.tellerList),
 ]
