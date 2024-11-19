@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ErrorAlert from "./ErrorAlert";
+import ErrorAlert from "../Components/ErrorAlert";
 
 function ClientLogin({ onLogin }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
