@@ -98,10 +98,10 @@ function ClientRegistration() {
 
     // Update product_id once products are loaded
     useEffect(() => {
-        if (Object.keys(products).length > 0) {
+        if (products.length > 0) {
             setFormValues((prevValues) => ({
                 ...prevValues,
-                product_id: Object.keys(products)[0],
+                branch_id: products[0].branch_id,
             }));
         }
     }, [products]); // Run only when products are updated
