@@ -71,9 +71,9 @@ function ClientLogin({ onLogin }) {
                     />
                 </div>
                 <div className="flex flex-col space-y-5">
-                    <label htmlFor="login_password">Password:</label>
+                    <label htmlFor="login_client_password">Password:</label>
                     <input
-                        id="login_password"
+                        id="login_client_password"
                         type="password"
                         name="password"
                         onChange={handleChange}
