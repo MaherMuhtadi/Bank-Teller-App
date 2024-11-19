@@ -264,24 +264,6 @@ def withdrawMoney(request):
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
-# @csrf_exempt
-# def employee_login(request):
-#     if request.method == 'POST':
-#         data = JSONParser().parse(request)
-#         employee_id = data.get('employee_id')
-#         password = data.get('password')
-
-#         try:
-#             teller = Teller.objects.get(employee_id=employee_id)
-#             if check_password(password, teller.password):
-#                 return JsonResponse({'message': 'Login successful', 'employee_id': teller.employee_id, 'success': 1}, status=200)
-#             else:
-#                 return JsonResponse({'error': 'Invalid employee_id or password', 'success': 0}, status=400)
-#         except Teller.DoesNotExist:
-#             return JsonResponse({'error': 'Invalid employee_id or password', 'success': 0}, status=400)
-
-#     return JsonResponse({'error': 'Invalid request method', 'success': 0}, status=400)
-
 @csrf_exempt
 def employee_login(request):
     if request.method == 'POST':
