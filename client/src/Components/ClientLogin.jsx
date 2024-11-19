@@ -73,7 +73,7 @@ function ClientLogin({ onLogin }) {
                     />
                 </div>
                 <button
-                    className="bg-green-500 rounded-md w-fit p-2 self-end"
+                    className="bg-blue-500 text-white rounded-md w-fit p-2 self-end"
                     type="submit"
                 >
                     Login

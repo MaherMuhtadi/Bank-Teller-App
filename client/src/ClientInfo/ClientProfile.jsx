@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import LoadingAnimation from "../Components/LoadingAnimation";
 
 function ClientProfile({ client }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
@@ -33,7 +34,7 @@ function ClientProfile({ client }) {
     }, []); // Empty dependency array to run only once when the component mounts
 
     if (branchesLoading) {
-        return <div className="flex justify-center">Loading...</div>; // Show loading message while data is being fetched
+        return <LoadingAnimation />; // Show loading message while data is being fetched
     }
 
     if (error) {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import LoadingAnimation from "../Components/LoadingAnimation";
 
 function ClientRegistration() {
     const apiUrl = "http://127.0.0.1:8000/account/";
@@ -215,7 +216,7 @@ function ClientRegistration() {
     };
 
     if (branchesLoading || productsLoading) {
-        return <div className="flex justify-center">Loading...</div>; // Show loading message while data is being fetched
+        return <LoadingAnimation />; // Show loading message while data is being fetched
     }
 
     if (error) {
@@ -573,7 +574,7 @@ function ClientRegistration() {
 
                 <button
                     type="submit"
-                    className="bg-green-500 rounded-md w-fit p-2 self-end"
+                    className="bg-blue-500 text-white rounded-md w-fit p-2 self-end"
                 >
                     Submit
                 </button>

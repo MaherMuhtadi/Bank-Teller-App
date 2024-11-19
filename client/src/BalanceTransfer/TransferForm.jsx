@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import LoadingAnimation from "../Components/LoadingAnimation";
 
 function TransferForm({ client_id, password }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
@@ -105,7 +106,7 @@ function TransferForm({ client_id, password }) {
     };
 
     if (productsLoading || accountsLoading) {
-        return <div className="flex justify-center">Loading...</div>; // Show loading message while data is being fetched
+        return <LoadingAnimation />; // Show loading message while data is being fetched
     }
 
     if (error) {
@@ -187,7 +188,7 @@ function TransferForm({ client_id, password }) {
                 />
             </div>
             <button
-                className="bg-green-500 rounded-md w-fit p-2 self-end"
+                className="bg-blue-500 text-white rounded-md w-fit p-2 self-end"
                 type="submit"
             >
                 Transfer

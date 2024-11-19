@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import LoadingAnimation from "../Components/LoadingAnimation";
 
 function Accounts({ client_id, password }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
@@ -61,7 +62,7 @@ function Accounts({ client_id, password }) {
     }, []); // Empty dependency array to run only once when the component mounts
 
     if (productsLoading || accountsLoading) {
-        return <div className="flex justify-center">Loading...</div>; // Show loading message while data is being fetched
+        return <LoadingAnimation />; // Show loading message while data is being fetched
     }
 
     if (error) {
