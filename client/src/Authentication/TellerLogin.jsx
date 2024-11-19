@@ -3,6 +3,7 @@ import ErrorAlert from "../Components/ErrorAlert";
 
 const TellerLogin = () => {
     sessionStorage.removeItem("employee_id"); // Clear the session storage
+    const apiUrl = "http://127.0.0.1:8000/account/";
 
     const [loginData, setLoginData] = useState({
         employee_id: "",
@@ -18,10 +19,36 @@ const TellerLogin = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    async function getTeller() {
+        try {
+            const response = await fetch(apiUrl + "employee_login/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(loginData),
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || response.statusText);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        sessionStorage.setItem("employee_id", loginData.employee_id); // Example login logic
-        window.location.href = "/"; // Redirect to the dashboard
+        try {
+            let tellerData = await getTeller();
+            sessionStorage.setItem("employee_id", tellerData.employee_id); // Example login logic
+            window.location.href = "/"; // Redirect to the dashboard
+        } catch (error) {
+            setSubmissionError(error.message);
+        }
     };
 
     return (
