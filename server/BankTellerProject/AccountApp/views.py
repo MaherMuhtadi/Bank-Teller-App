@@ -2,9 +2,11 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
+from django.contrib.auth.hashers import check_password
+
 import json
 import random
-from .serializers import ClientSerializer, AccountSerializer, BranchSerializer, BranchDropDownSerializer, ProductDropDownSerializer, CreateClientSerializer, TransactionSerializer
+from .serializers import ClientSerializer, AccountSerializer, BranchSerializer, BranchDropDownSerializer, ProductDropDownSerializer, CreateClientSerializer, TransactionSerializer, TellerSerializer
 from .models import Client, Account, Branch, Product, Transaction, Teller, Schedule
 from datetime import datetime
 # Create your views here.
@@ -262,6 +264,24 @@ def withdrawMoney(request):
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
+# @csrf_exempt
+# def employee_login(request):
+#     if request.method == 'POST':
+#         data = JSONParser().parse(request)
+#         employee_id = data.get('employee_id')
+#         password = data.get('password')
+
+#         try:
+#             teller = Teller.objects.get(employee_id=employee_id)
+#             if check_password(password, teller.password):
+#                 return JsonResponse({'message': 'Login successful', 'employee_id': teller.employee_id, 'success': 1}, status=200)
+#             else:
+#                 return JsonResponse({'error': 'Invalid employee_id or password', 'success': 0}, status=400)
+#         except Teller.DoesNotExist:
+#             return JsonResponse({'error': 'Invalid employee_id or password', 'success': 0}, status=400)
+
+#     return JsonResponse({'error': 'Invalid request method', 'success': 0}, status=400)
+
 @csrf_exempt
 def employee_login(request):
     if request.method == 'POST':
@@ -270,9 +290,35 @@ def employee_login(request):
         password = data.get('password')
 
         try:
-            teller = Teller.objects.get(employee_id=employee_id, password=password)
-            return JsonResponse({'message': 'Login successful', 'employee_id': teller.employee_id, 'success': 1}, status=200)
+            teller = Teller.objects.get(employee_id=employee_id)
         except Teller.DoesNotExist:
-            return JsonResponse({'error': 'Invalid employee_id or password', 'success': 0}, status=400)
+            return JsonResponse({'error': 'Invalid employee_id or password'}, status=400)
 
-    return JsonResponse({'error': 'Invalid request method', 'success': 0}, status=400)
+        # Validate the password
+        if teller.check_password(password):
+            return JsonResponse({'message': 'Login successful'}, status=200)
+        else:
+            return JsonResponse({'error': 'Invalid email or password'}, status=400)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+@csrf_exempt
+def create_teller(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        
+        # Generate a unique employee_id
+        while True:
+            employee_id = str(random.randint(100000, 999999))
+            if not Teller.objects.filter(employee_id=employee_id).exists():
+                break
+        
+        data['employee_id'] = employee_id  # Add the generated employee_id to the data
+
+        serializer = TellerSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()  # The password will be hashed automatically by the model
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)

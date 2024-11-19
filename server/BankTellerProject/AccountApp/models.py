@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
 
 # Create your models here.
 
@@ -54,12 +55,23 @@ class Teller(models.Model):
     last_name = models.CharField(max_length=50)
     email = models.EmailField(max_length=50)
     phone = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
+    password = models.CharField(max_length=256)
     dob = models.DateField()
     address = models.CharField(max_length=250)
     branch_id = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        # Only hash the password if it hasn't already been hashed
+        if self.pk is None or not self.password.startswith('pbkdf2_'):
+            self.password = make_password(self.password)
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.first_name + " " + self.last_name
+
+    def check_password(self, raw_password):
+        # A helper method to compare the raw password with the hashed one
+        return check_password(raw_password, self.password)
     
 class Schedule(models.Model):
     schedule_id = models.CharField(max_length=50, primary_key=True)
