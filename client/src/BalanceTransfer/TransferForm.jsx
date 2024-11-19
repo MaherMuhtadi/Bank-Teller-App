@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
+import LoadingAnimation from "../Components/LoadingAnimation";
+import ErrorAlert from "../Components/ErrorAlert";
 
 function TransferForm({ client_id, password }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
     const [productsLoading, setProductsLoading] = useState(true);
     const [accountsLoading, setAccountsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [fetchError, setFetchError] = useState(null);
+    const [submissionError, setSubmissionError] = useState(null);
 
     const [accounts, setAccounts] = useState([]);
     const [products, setProducts] = useState([]);
@@ -30,13 +33,13 @@ function TransferForm({ client_id, password }) {
                 }),
             });
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || response.statusText);
             }
             const data = await response.json();
             setAccounts(data);
         } catch (error) {
-            setError(error.message); // Set error if any occurs
-            console.error("Error fetching accounts:", error);
+            throw new Error(error.message);
         } finally {
             setAccountsLoading(false); // Set loading to false once done
         }
@@ -51,13 +54,13 @@ function TransferForm({ client_id, password }) {
                 },
             });
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || response.statusText);
             }
             const data = await response.json();
             setProducts(data);
         } catch (error) {
-            setError(error.message); // Set error if any occurs
-            console.error("Error fetching products:", error);
+            throw new Error(error.message);
         } finally {
             setProductsLoading(false); // Set loading to false once done
         }
@@ -72,8 +75,12 @@ function TransferForm({ client_id, password }) {
     };
 
     useEffect(() => {
-        getAccounts();
-        getProducts();
+        try {
+            getAccounts();
+            getProducts();
+        } catch (error) {
+            setFetchError(error.message);
+        }
     }, []); // Empty dependency array to run only once when the component mounts
 
     const transferAmount = async () => {
@@ -86,35 +93,41 @@ function TransferForm({ client_id, password }) {
                 body: JSON.stringify(formData),
             });
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || response.statusText);
             }
             const data = await response.json();
             return data;
         } catch (error) {
-            setError(error.message); // Set error if any occurs
-            console.error("Error transferring amount:", error);
+            throw new Error(error.message);
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const data = await transferAmount();
-        if (data) {
-            alert("Amount transferred successfully!");
+        try {
+            const data = await transferAmount();
+            if (data) {
+                alert("Amount transferred successfully!");
+            }
+        } catch (error) {
+            setSubmissionError(error.message);
         }
     };
 
     if (productsLoading || accountsLoading) {
-        return <div className="flex justify-center">Loading...</div>; // Show loading message while data is being fetched
+        return <LoadingAnimation />; // Show loading message while data is being fetched
     }
 
-    if (error) {
-        return <div className="flex justify-center">{error}</div>; // Display any error that occurs
+    if (fetchError) {
+        return <ErrorAlert error={fetchError} />; // Show error message if any occurs
     }
 
     return (
         <form className="flex flex-col space-y-6 w-1/2" onSubmit={handleSubmit}>
             <h2 className="font-bold text-xl text-center">Balance Transfer</h2>
+
+            {submissionError && <ErrorAlert error={submissionError} />}
 
             <div className="flex flex-col space-y-5">
                 <label htmlFor="transfer_transaction_type">
@@ -187,7 +200,7 @@ function TransferForm({ client_id, password }) {
                 />
             </div>
             <button
-                className="bg-green-500 rounded-md w-fit p-2 self-end"
+                className="bg-blue-500 text-white rounded-md w-fit p-2 self-end"
                 type="submit"
             >
                 Transfer

@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
-import ClientLogin from "../ClientLogin";
+import ClientLogin from "../Components/ClientLogin";
 import ClientProfile from "./ClientProfile";
 import Accounts from "./Accounts";
 

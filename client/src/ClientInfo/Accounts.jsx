@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import LoadingAnimation from "../Components/LoadingAnimation";
+import ErrorAlert from "../Components/ErrorAlert";
 
 function Accounts({ client_id, password }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
     const [productsLoading, setProductsLoading] = useState(true);
     const [accountsLoading, setAccountsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [fetchError, setFetchError] = useState(null);
 
     const [accounts, setAccounts] = useState([]);
     const [products, setProducts] = useState([]);
@@ -22,13 +24,13 @@ function Accounts({ client_id, password }) {
                 }),
             });
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || response.statusText);
             }
             const data = await response.json();
             setAccounts(data);
         } catch (error) {
-            setError(error.message); // Set error if any occurs
-            console.error("Error fetching accounts:", error);
+            throw new Error(error.message);
         } finally {
             setAccountsLoading(false); // Set loading to false once done
         }
@@ -43,29 +45,33 @@ function Accounts({ client_id, password }) {
                 },
             });
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || response.statusText);
             }
             const data = await response.json();
             setProducts(data);
         } catch (error) {
-            setError(error.message); // Set error if any occurs
-            console.error("Error fetching products:", error);
+            throw new Error(error.message);
         } finally {
             setProductsLoading(false); // Set loading to false once done
         }
     }
 
     useEffect(() => {
-        getAccounts();
-        getProducts();
+        try {
+            getAccounts();
+            getProducts();
+        } catch (error) {
+            setFetchError(error.message);
+        }
     }, []); // Empty dependency array to run only once when the component mounts
 
     if (productsLoading || accountsLoading) {
-        return <div className="flex justify-center">Loading...</div>; // Show loading message while data is being fetched
+        return <LoadingAnimation />; // Show loading message while data is being fetched
     }
 
-    if (error) {
-        return <div className="flex justify-center">{error}</div>; // Display any error that occurs
+    if (fetchError) {
+        return <ErrorAlert error={fetchError} />; // Display any error that occurs
     }
 
     return (
