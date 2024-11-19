@@ -35,9 +35,9 @@ class Product(models.Model):
     product_id = models.CharField(max_length=50, primary_key=True)
     product_name = models.CharField(max_length=50)  # product_name is the name of the product
     description = models.TextField(max_length=250)
-    transaction_limit = models.DecimalField(max_digits=10, decimal_places=6)
-    interest_rate = models.DecimalField(max_digits=10, decimal_places=6)
-    monthly_fee = models.DecimalField(max_digits=10, decimal_places=6)
+    transaction_limit = models.DecimalField(max_digits=15, decimal_places=6)
+    interest_rate = models.DecimalField(max_digits=15, decimal_places=6)
+    monthly_fee = models.DecimalField(max_digits=15, decimal_places=6)
     def __str__(self):
         return self.product_name
     
@@ -45,7 +45,7 @@ class Account(models.Model):
     account_id = models.CharField(max_length=50, primary_key=True)
     client_id = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True)
     product_id = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
-    balance = models.DecimalField(max_digits=10, decimal_places=2)
+    balance = models.DecimalField(max_digits=15, decimal_places=6)
     def __str__(self):
         return self.account_id
     
@@ -89,7 +89,7 @@ class Transaction(models.Model):
     transaction_type = models.CharField(max_length=50)
     from_account_id = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='from_account', null=True, blank=True)
     to_account_id = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='to_account', null=True, blank=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=15, decimal_places=6)
     timestamp = models.DateTimeField() #timestamp is the time of the transaction
     def __str__(self):
         return self.transaction_id
