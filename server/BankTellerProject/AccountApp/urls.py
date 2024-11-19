@@ -12,6 +12,8 @@ urlpatterns = [
     path("account_list_for_client/",views.get_account_list_for_a_client),
     path("transaction/", views.create_transaction),
     path("get_transactions_list/", views.get_all_transactions),
+    path("employee_login/", views.employee_login),
+    path("create_employee/", views.create_teller),
 
     path("deposite/", views.depositMoney),
     path("withdraw/", views.withdrawMoney),
