@@ -44,7 +44,11 @@ const TellerLogin = () => {
         e.preventDefault();
         try {
             let tellerData = await getTeller();
-            sessionStorage.setItem("employee_id", tellerData.employee_id); // Example login logic
+            sessionStorage.setItem("employee_id", tellerData.employee_id);
+            sessionStorage.setItem(
+                "employee_first_name",
+                tellerData.first_name
+            );
             window.location.href = "/"; // Redirect to the dashboard
         } catch (error) {
             setSubmissionError(error.message);

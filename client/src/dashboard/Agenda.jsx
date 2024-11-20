@@ -13,7 +13,7 @@ function Agenda() {
             </a>
             <div className="absolute top-0 left-32 right-0 flex flex-col h-16 justify-center">
                 <h3 className="font-bold text-lg italic text-center">
-                    Hello, John!
+                    Hello, {sessionStorage.getItem("employee_first_name")}!
                 </h3>
             </div>
         </div>
