@@ -6,6 +6,7 @@ import ClientInfo from "./ClientInfo/ClientInfo";
 import BalanceTransfer from "./BalanceTransfer/BalanceTransfer";
 import TellerLogin from "./Authentication/TellerLogin";
 import ProtectedRoute from "./Authentication/ProtectedRoute";
+import CreateTeller from "./Admin/CreateTeller";
 
 const router = createBrowserRouter([
     {
@@ -82,7 +83,11 @@ const router = createBrowserRouter([
     },
     {
         path: "/sign_in",
-        element: <TellerLogin />, // Login page
+        element: <TellerLogin />,
+    },
+    {
+        path: "/admin/create_teller",
+        element: <CreateTeller />, // Create teller page temporarily added for testing
     },
     {
         path: "*",
