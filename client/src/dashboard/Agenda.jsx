@@ -1,8 +1,8 @@
 function Agenda() {
     return (
-        <div className="flex w-1/4 relative">
+        <div className="flex w-2/5 relative">
             <div className="rounded-xl bg-neutral-50 w-full p-4 mt-16 shadow-md">
-                <h2 className="font-bold text-xl text-right">My Agenda</h2>
+                <h2 className="font-bold text-xl text-right">Your Agenda</h2>
             </div>
             <a href="/profile">
                 <img
