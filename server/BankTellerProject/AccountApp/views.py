@@ -5,6 +5,7 @@ import json
 import random
 from .serializers import ClientSerializer, BankAccountSerializer
 from .models import Client, BankAccount
+from ml.fraudDetectionModel import detect_fraud
 # Create your views here.
 
 def account_list(request):
@@ -142,6 +143,19 @@ def depositMoney(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
+def detect_fraud_api(request):
+
+    # Fetch all transactions
+    transactions = Transaction.objects.all().values()
+    transaction_df = pd.DataFrame(transactions)
+
+    # If no transactions are available
+    if transaction_df.empty:
+        return JsonResponse({"error": "No transactions available for analysis"}, status=400)
+
+    fraud_predictions = detect_fraud(transaction_df)
+
+    return JsonResponse(fraud_predictions.to_dict(orient='records'), safe=False)
 
 @csrf_exempt
 def withdrawMoney(request):
