@@ -2,6 +2,24 @@
 
 A CRM for bank employees to manage clients and accounts, conduct transactions, and detect fraud with machine learning support.
 
+## Table of Contents
+
+- [Bank-Teller-App](#bank-teller-app)
+  - [Table of Contents](#table-of-contents)
+  - [Tech Stack](#tech-stack)
+  - [Design](#design)
+    - [Relational Database](#relational-database)
+  - [Features](#features)
+    - [Fraud Detection Model](#fraud-detection-model)
+      - [Key features](#key-features)
+      - [Data Description](#data-description)
+      - [How It Works](#how-it-works)
+      - [Code Explanation](#code-explanation)
+      - [Expected Output](#expected-output)
+  - [Installation](#installation)
+    - [Frontend](#frontend)
+    - [Fraud Detection Model](#fraud-detection-model-1)
+
 ## Tech Stack
 
 -   **Backend:**
@@ -89,6 +107,22 @@ cd client
 npm install
 npm run dev
 ```
+
+**Credentials:**
+
+The dummy Employee/Teller profile credentials for testing, as saved in `server/BankTellerProject/db.sqlite3`:
+
+- Employee ID: *787713*
+- Password: *admin*
+
+Alternatively, you can create a new Teller profile by navigating to the `/admin/create_teller` route. This is temporarily in place for testing purposes.
+
+The dummy Client profile credentials for testing, as saved in `server/BankTellerProject/db.sqlite3`:
+
+- Client ID: *9712826163*
+- Password: *client*
+
+**Deployment:**
 
 Use `npm run build` to build the finished project for production.
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import LoadingAnimation from "../Components/LoadingAnimation";
 import ErrorAlert from "../Components/ErrorAlert";
 
-function TransferForm({ client_id, password }) {
+function CashForm({ client_id, password }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
     const [productsLoading, setProductsLoading] = useState(true);
     const [accountsLoading, setAccountsLoading] = useState(true);
@@ -11,10 +11,11 @@ function TransferForm({ client_id, password }) {
 
     const [accounts, setAccounts] = useState([]);
     const [products, setProducts] = useState([]);
+    const transaction_types = ["Deposit", "Withdrawal"];
 
     const [formData, setFormData] = useState({
-        from_account_id: "",
-        to_account_id: "",
+        transaction_type: transaction_types[0],
+        account_id: "",
         amount: 0,
     });
 
@@ -84,14 +85,15 @@ function TransferForm({ client_id, password }) {
         fetchData();
     }, []); // Empty dependency array to run only once when the component mounts
 
-    const transferAmount = async () => {
+    const transferAmount = async (type, transferData) => {
+        let apiRoute = type === "Deposit" ? "deposit/" : "withdraw/";
         try {
-            const response = await fetch(apiUrl + "transaction/", {
+            const response = await fetch(apiUrl + apiRoute, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(transferData),
             });
             if (!response.ok) {
                 const errorData = await response.json();
@@ -106,10 +108,15 @@ function TransferForm({ client_id, password }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        let type = formData.transaction_type;
+        let transferData = {
+            account_no: formData.account_id,
+            amount: formData.amount,
+        };
         try {
-            const data = await transferAmount();
+            const data = await transferAmount(type, transferData);
             if (data) {
-                alert("Amount transferred successfully!");
+                alert("Cash transferred successfully!");
             }
         } catch (error) {
             setSubmissionError(error.message);
@@ -126,16 +133,33 @@ function TransferForm({ client_id, password }) {
 
     return (
         <form className="flex flex-col space-y-6 w-1/2" onSubmit={handleSubmit}>
-            <h2 className="font-bold text-xl text-center">Balance Transfer</h2>
+            <h2 className="font-bold text-xl text-center">Cash Transaction</h2>
 
             {submissionError && <ErrorAlert error={submissionError} />}
 
             <div className="flex flex-col space-y-5">
-                <label htmlFor="transfer_from">From Account</label>
+                <label htmlFor="cash_transaction_type">Transaction Type</label>
                 <select
-                    id="transfer_from"
-                    name="from_account_id"
-                    value={formData.from_account_id}
+                    id="cash_transaction_type"
+                    name="transaction_type"
+                    value={formData.transaction_type}
+                    onChange={handleChange}
+                    className="rounded-md border text-lg p-1"
+                >
+                    {transaction_types.map((type, index) => (
+                        <option key={index} value={type}>
+                            {type}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <div className="flex flex-col space-y-5">
+                <label htmlFor="cash_account">Account</label>
+                <select
+                    id="cash_account"
+                    name="account_id"
+                    value={formData.account_id}
                     onChange={handleChange}
                     className="rounded-md border text-lg p-1"
                 >
@@ -159,21 +183,9 @@ function TransferForm({ client_id, password }) {
             </div>
 
             <div className="flex flex-col space-y-5">
-                <label htmlFor="transfer_to">To Account</label>
+                <label htmlFor="cash_amount">Amount</label>
                 <input
-                    id="transfer_to"
-                    type="text"
-                    name="to_account_id"
-                    value={formData.to_account_id}
-                    onChange={handleChange}
-                    className="rounded-md border text-lg p-1"
-                />
-            </div>
-
-            <div className="flex flex-col space-y-5">
-                <label htmlFor="transfer_amount">Amount</label>
-                <input
-                    id="tranfer_amount"
+                    id="cash_amount"
                     type="number"
                     name="amount"
                     value={formData.amount}
@@ -185,10 +197,10 @@ function TransferForm({ client_id, password }) {
                 className="bg-blue-500 text-white rounded-md w-fit p-2 self-end"
                 type="submit"
             >
-                Transfer
+                Confirm
             </button>
         </form>
     );
 }
 
-export default TransferForm;
+export default CashForm;

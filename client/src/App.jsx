@@ -4,6 +4,7 @@ import Dashboard from "./Dashboard/Dashboard";
 import ClientRegistration from "./ClientRegistration/ClientRegistration";
 import ClientInfo from "./ClientInfo/ClientInfo";
 import BalanceTransfer from "./BalanceTransfer/BalanceTransfer";
+import CashTransaction from "./CashTransaction/CashTransaction";
 import TellerLogin from "./Authentication/TellerLogin";
 import ProtectedRoute from "./Authentication/ProtectedRoute";
 import CreateTeller from "./Admin/CreateTeller";
@@ -77,7 +78,7 @@ const router = createBrowserRouter([
         path: "/cash",
         element: (
             <ProtectedRoute>
-                <Dashboard />
+                <CashTransaction />
             </ProtectedRoute>
         ),
     },
