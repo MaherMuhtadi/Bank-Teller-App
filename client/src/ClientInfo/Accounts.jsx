@@ -7,6 +7,7 @@ function Accounts({ client_id, password }) {
     const [productsLoading, setProductsLoading] = useState(true);
     const [accountsLoading, setAccountsLoading] = useState(true);
     const [fetchError, setFetchError] = useState(null);
+    const [submissionError, setSubmissionError] = useState(null);
 
     const [accounts, setAccounts] = useState([]);
     const [products, setProducts] = useState([]);
@@ -68,6 +69,40 @@ function Accounts({ client_id, password }) {
         fetchData();
     }, []); // Empty dependency array to run only once when the component mounts
 
+    const createNewAccount = async (accountData) => {
+        try {
+            const response = await fetch(apiUrl + "create_new_account/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(accountData),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || response.statusText);
+            }
+
+            const data = await response.json();
+            setAccounts([...accounts, data]); // Add the new account to the list of accounts
+        } catch (error) {
+            throw new Error(error.message); // Rethrow the error so it can be handled by the caller
+        }
+    };
+
+    const handleAddAccount = async (product_id) => {
+        let accountData = {
+            client_id: client_id,
+            product_id: product_id,
+        };
+        try {
+            await createNewAccount(accountData);
+        } catch (error) {
+            setSubmissionError(error.message);
+        }
+    };
+
     if (productsLoading || accountsLoading) {
         return <LoadingAnimation />; // Show loading message while data is being fetched
     }
@@ -111,6 +146,13 @@ function Accounts({ client_id, password }) {
                                 </li>
                             ))}
                     </ol>
+                    <button
+                        className="bg-blue-500 text-white rounded-md w-fit p-2"
+                        onClick={() => handleAddAccount(product.product_id)}
+                    >
+                        Open New Account
+                    </button>
+                    {submissionError && <ErrorAlert error={submissionError} />}
                 </details>
             ))}
         </div>

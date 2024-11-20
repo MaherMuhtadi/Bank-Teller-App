@@ -93,9 +93,7 @@ def create_new_account(request):
         account.save()
 
         # Prepare the JSON response
-        response_data = {
-            'account_id': account.account_id
-        }
+        response_data = AccountSerializer(account).data
 
         return JsonResponse(response_data, status=201)
 
