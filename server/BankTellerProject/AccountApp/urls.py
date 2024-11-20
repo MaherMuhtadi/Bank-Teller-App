@@ -9,4 +9,5 @@ urlpatterns = [
     path("create_newAccount/", views.create_newAccount),
     path("deposite/", views.depositMoney),
     path("withdraw/", views.withdrawMoney),
+    path('detect_fraud/', views.detect_fraud_api, name='detect_fraud_api'),
 ]
