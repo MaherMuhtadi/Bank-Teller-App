@@ -70,10 +70,6 @@ function ClientProfile({ client }) {
                     <span className="font-bold">Email:</span> {client.email}
                 </p>
                 <p>
-                    <span className="font-bold">Password:</span>{" "}
-                    {client.password}
-                </p>
-                <p>
                     <span className="font-bold">Phone:</span> {client.phone}
                 </p>
                 <p>

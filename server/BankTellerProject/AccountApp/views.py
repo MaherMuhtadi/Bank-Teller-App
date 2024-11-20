@@ -319,7 +319,7 @@ def employee_login(request):
 
         # Validate the password
         if teller.check_password(password):
-            return JsonResponse({'message': 'Login successful', 'employee_id': employee_id}, status=200)
+            return JsonResponse({'message': 'Login successful', 'employee_id': teller.employee_id, 'first_name': teller.first_name}, status=200)
         else:
             return JsonResponse({'error': 'Invalid email or password'}, status=400)
     

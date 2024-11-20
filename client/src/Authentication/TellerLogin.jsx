@@ -1,14 +1,15 @@
 import { useState } from "react";
-import ErrorAlert from "./ErrorAlert";
+import ErrorAlert from "../Components/ErrorAlert";
 
-function ClientLogin({ onLogin }) {
+const TellerLogin = () => {
+    sessionStorage.removeItem("employee_id"); // Clear the session storage
     const apiUrl = "http://127.0.0.1:8000/account/";
-    const [submissionError, setSubmissionError] = useState(null);
 
     const [loginData, setLoginData] = useState({
-        client_id: "",
+        employee_id: "",
         password: "",
     });
+    const [submissionError, setSubmissionError] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -18,16 +19,15 @@ function ClientLogin({ onLogin }) {
         }));
     };
 
-    async function getClient() {
+    async function getTeller() {
         try {
-            const response = await fetch(apiUrl + "get_client_details/", {
+            const response = await fetch(apiUrl + "employee_login/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(loginData),
             });
-
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || response.statusText);
@@ -43,8 +43,13 @@ function ClientLogin({ onLogin }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            let clientData = await getClient();
-            onLogin(clientData);
+            let tellerData = await getTeller();
+            sessionStorage.setItem("employee_id", tellerData.employee_id);
+            sessionStorage.setItem(
+                "employee_first_name",
+                tellerData.first_name
+            );
+            window.location.href = "/"; // Redirect to the dashboard
         } catch (error) {
             setSubmissionError(error.message);
         }
@@ -56,24 +61,24 @@ function ClientLogin({ onLogin }) {
                 className="flex flex-col space-y-5 w-1/2 min-w-fit"
                 onSubmit={handleSubmit}
             >
-                <h2 className="font-bold text-xl text-center">Client Login</h2>
+                <h2 className="font-bold text-xl text-center">Teller Login</h2>
 
                 {submissionError && <ErrorAlert error={submissionError} />}
 
                 <div className="flex flex-col space-y-5">
-                    <label htmlFor="login_client_id">Client ID:</label>
+                    <label htmlFor="login_employee_id">Employee ID:</label>
                     <input
-                        id="login_client_id"
+                        id="login_employee_id"
                         type="text"
-                        name="client_id"
+                        name="employee_id"
                         onChange={handleChange}
                         className="rounded-md border text-lg p-1"
                     />
                 </div>
                 <div className="flex flex-col space-y-5">
-                    <label htmlFor="login_password">Password:</label>
+                    <label htmlFor="login_employee_password">Password:</label>
                     <input
-                        id="login_password"
+                        id="login_employee_password"
                         type="password"
                         name="password"
                         onChange={handleChange}
@@ -89,6 +94,6 @@ function ClientLogin({ onLogin }) {
             </form>
         </div>
     );
-}
+};
 
-export default ClientLogin;
+export default TellerLogin;

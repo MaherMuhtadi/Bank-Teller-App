@@ -1,50 +1,93 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import NavBar from "./NavBar";
+import NavBar from "./Components/NavBar";
 import Dashboard from "./Dashboard/Dashboard";
 import ClientRegistration from "./ClientRegistration/ClientRegistration";
 import ClientInfo from "./ClientInfo/ClientInfo";
 import BalanceTransfer from "./BalanceTransfer/BalanceTransfer";
+import TellerLogin from "./Authentication/TellerLogin";
+import ProtectedRoute from "./Authentication/ProtectedRoute";
+import CreateTeller from "./Admin/CreateTeller";
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <Dashboard />,
+        element: (
+            <ProtectedRoute>
+                <Dashboard />
+            </ProtectedRoute>
+        ),
     },
     {
         path: "/messages",
-        element: <Dashboard />,
+        element: (
+            <ProtectedRoute>
+                <Dashboard />
+            </ProtectedRoute>
+        ),
     },
     {
         path: "/colleagues",
-        element: <Dashboard />,
+        element: (
+            <ProtectedRoute>
+                <Dashboard />
+            </ProtectedRoute>
+        ),
     },
     {
         path: "/products",
-        element: <Dashboard />,
-    },
-    {
-        path: "/sign_in",
-        element: <Dashboard />,
+        element: (
+            <ProtectedRoute>
+                <Dashboard />
+            </ProtectedRoute>
+        ),
     },
     {
         path: "/profile",
-        element: <Dashboard />,
+        element: (
+            <ProtectedRoute>
+                <Dashboard />
+            </ProtectedRoute>
+        ),
     },
     {
         path: "/client_info",
-        element: <ClientInfo />,
+        element: (
+            <ProtectedRoute>
+                <ClientInfo />
+            </ProtectedRoute>
+        ),
     },
     {
         path: "/client_registration",
-        element: <ClientRegistration />,
+        element: (
+            <ProtectedRoute>
+                <ClientRegistration />
+            </ProtectedRoute>
+        ),
     },
     {
         path: "/transfer",
-        element: <BalanceTransfer />,
+        element: (
+            <ProtectedRoute>
+                <BalanceTransfer />
+            </ProtectedRoute>
+        ),
     },
     {
         path: "/cash",
-        element: <Dashboard />,
+        element: (
+            <ProtectedRoute>
+                <Dashboard />
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: "/sign_in",
+        element: <TellerLogin />,
+    },
+    {
+        path: "/admin/create_teller",
+        element: <CreateTeller />, // Create teller page temporarily added for testing
     },
     {
         path: "*",

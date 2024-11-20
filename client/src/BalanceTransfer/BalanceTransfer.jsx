@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ClientLogin from "../Components/ClientLogin";
+import ClientLogin from "../Authentication/ClientLogin";
 import TransferForm from "./TransferForm";
 
 function BalanceTransfer() {
