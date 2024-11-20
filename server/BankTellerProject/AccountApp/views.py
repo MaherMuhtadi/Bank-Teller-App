@@ -366,3 +366,21 @@ def tellerList(request):
         return JsonResponse(serializer.data, safe=False, status=200)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=400)
+    
+
+@csrf_exempt
+def transactionListforAccount(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        account_id = data.get('account_id')
+        try:
+            account = Account.objects.get(account_id=account_id)
+        except Account.DoesNotExist:
+            return JsonResponse({'error': 'Invalid account_id'}, status=400)
+        from_transactions = Transaction.objects.filter(from_account_id=account)
+        to_transactions = Transaction.objects.filter(to_account_id=account)
+        
+        from_transactions_serializer = TransactionSerializer(from_transactions, many=True)
+        to_transactions_serializer = TransactionSerializer(to_transactions, many=True)
+        return JsonResponse({'debit': from_transactions_serializer, 'credit': to_transactions_serializer}, safe=False, status=200)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
