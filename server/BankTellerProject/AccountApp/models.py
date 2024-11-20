@@ -21,6 +21,14 @@ class BankAccount(models.Model):
     account_type = models.CharField(max_length=50)
     balance = models.DecimalField(max_digits=10, decimal_places=2)
     branch = models.CharField(max_length=50)
+#Transaction model for the ml model
+class Transaction(models.Model):
+    transaction_id = models.AutoField(primary_key=True)
+    amount = models.FloatField()
+    transaction_time = models.IntegerField()  # Hours of the day (0-23)
+    transaction_location = models.CharField(max_length=10, choices=[('local', 'Local'), ('foreign', 'Foreign')])
+    account_balance = models.FloatField()
 
     def __str__(self):
-        return self.account_no
+        return f"Transaction {self.transaction_id} - Amount: {self.amount}" self.account_no
+
