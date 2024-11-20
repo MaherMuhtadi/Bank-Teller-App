@@ -384,3 +384,25 @@ def transactionListforAccount(request):
         to_transactions_serializer = TransactionSerializer(to_transactions, many=True)
         return JsonResponse({'debit': from_transactions_serializer, 'credit': to_transactions_serializer}, safe=False, status=200)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def transaction_summary(request):
+    if request.method == 'GET':
+        total_transactions_count = Transaction.objects.count()
+        total_deposits_count = Transaction.objects.filter(transaction_type='Deposit').count()
+        total_withdrawals_count = Transaction.objects.filter(transaction_type='Withdraw').count()
+        total_transfer_count = Transaction.objects.filter(transaction_type='Transfer').count()
+
+        total_withdrawals_amount = Transaction.objects.filter(transaction_type='Withdraw').aggregate(Sum('amount'))['amount__sum']
+        total_deposits_amount = Transaction.objects.filter(transaction_type='Deposit').aggregate(Sum('amount'))['amount__sum']
+        
+        return JsonResponse({
+            'total_transactions_count': total_transactions_count,
+            'total_deposits_count': total_deposits_count,
+            'total_withdrawals_count': total_withdrawals_count,
+            'total_transfer_count': total_transfer_count,
+            'total_withdrawals_amount': total_withdrawals_amount,
+            'total_deposits_amount': total_deposits_amount
+        }, status=200)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
