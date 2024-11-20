@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from django.contrib.auth.hashers import check_password
+from django.db.models import Sum  # Import the Sum function
 
 import json
 import random
@@ -377,12 +378,13 @@ def transactionListforAccount(request):
             account = Account.objects.get(account_id=account_id)
         except Account.DoesNotExist:
             return JsonResponse({'error': 'Invalid account_id'}, status=400)
+        
         from_transactions = Transaction.objects.filter(from_account_id=account)
         to_transactions = Transaction.objects.filter(to_account_id=account)
         
         from_transactions_serializer = TransactionSerializer(from_transactions, many=True)
         to_transactions_serializer = TransactionSerializer(to_transactions, many=True)
-        return JsonResponse({'debit': from_transactions_serializer, 'credit': to_transactions_serializer}, safe=False, status=200)
+        return JsonResponse({'debit': from_transactions_serializer.data, 'credit': to_transactions_serializer.data}, safe=False, status=200)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 @csrf_exempt
@@ -396,6 +398,12 @@ def transaction_summary(request):
         total_withdrawals_amount = Transaction.objects.filter(transaction_type='Withdraw').aggregate(Sum('amount'))['amount__sum']
         total_deposits_amount = Transaction.objects.filter(transaction_type='Deposit').aggregate(Sum('amount'))['amount__sum']
         
+         # Handle cases where there are no transactions
+        if total_withdrawals_amount is None:
+            total_withdrawals_amount = 0.00
+        if total_deposits_amount is None:
+            total_deposits_amount = 0.00
+                
         return JsonResponse({
             'total_transactions_count': total_transactions_count,
             'total_deposits_count': total_deposits_count,
