@@ -11,10 +11,8 @@ function TransferForm({ client_id, password }) {
 
     const [accounts, setAccounts] = useState([]);
     const [products, setProducts] = useState([]);
-    const transaction_types = ["Interact e-Transfer"];
 
     const [formData, setFormData] = useState({
-        transaction_type: transaction_types[0],
         from_account_id: "",
         to_account_id: "",
         amount: 0,
@@ -131,25 +129,6 @@ function TransferForm({ client_id, password }) {
             <h2 className="font-bold text-xl text-center">Balance Transfer</h2>
 
             {submissionError && <ErrorAlert error={submissionError} />}
-
-            <div className="flex flex-col space-y-5">
-                <label htmlFor="transfer_transaction_type">
-                    Transaction Type
-                </label>
-                <select
-                    id="transfer_transaction_type"
-                    name="transaction_type"
-                    value={formData.transaction_type}
-                    onChange={handleChange}
-                    className="rounded-md border text-lg p-1"
-                >
-                    {transaction_types.map((type, index) => (
-                        <option key={index} value={type}>
-                            {type}
-                        </option>
-                    ))}
-                </select>
-            </div>
 
             <div className="flex flex-col space-y-5">
                 <label htmlFor="transfer_from">From Account</label>

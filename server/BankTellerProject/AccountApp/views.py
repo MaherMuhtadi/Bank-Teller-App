@@ -123,7 +123,6 @@ def get_account_list_for_a_client(request):
 def create_transaction(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
-        transaction_type = data.get('transaction_type')
         from_account_id = data.get('from_account_id')
         to_account_id = data.get('to_account_id')
         amount = data.get('amount')
@@ -156,7 +155,7 @@ def create_transaction(request):
         # Create a new Transaction object
         transaction = Transaction(
             transaction_id=transaction_id,
-            transaction_type=transaction_type,
+            transaction_type='Transfer',
             from_account_id=from_account,
             to_account_id=to_account,
             amount=amount,
