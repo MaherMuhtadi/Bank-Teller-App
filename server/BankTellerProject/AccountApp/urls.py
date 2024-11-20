@@ -20,4 +20,7 @@ urlpatterns = [
 
     path("transactionList/", views.transactionList),
     path("employeeList/", views.tellerList),
+
+    path("transactionListforAccount/", views.transactionListforAccount),
+    path("transaction_summary/", views.transaction_summary),
 ]
