@@ -408,7 +408,8 @@ def transaction_summary(request):
             'total_withdrawals_count': total_withdrawals_count,
             'total_transfer_count': total_transfer_count,
             'total_withdrawals_amount': total_withdrawals_amount,
-            'total_deposits_amount': total_deposits_amount
+            'total_deposits_amount': total_deposits_amount,
+            'net_cash_flow': total_deposits_amount - total_withdrawals_amount
         }, status=200)
     
     return JsonResponse({'error': 'Invalid request method'}, status=400)

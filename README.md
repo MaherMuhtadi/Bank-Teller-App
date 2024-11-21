@@ -33,7 +33,9 @@ A CRM for bank employees to manage clients and accounts, conduct transactions, a
     -   Matplotlib
 -   **Frontend:**
     -   ReactJS (Client)
-    -   Tailwind
+    -   Tailwind (Styling)
+    -   React Router (Component Navigation)
+    -   Chart.js (Data Visualizations)
 
 ## Design
 
