@@ -1,6 +1,6 @@
 function Clients() {
     return (
-        <nav className="rounded-xl bg-neutral-50 p-4 shadow-md">
+        <nav className="rounded-xl space-y-5 bg-neutral-50 p-4 shadow-md">
             <h2 className="font-bold text-xl">Clients</h2>
             <ul className="flex justify-between">
                 <li>

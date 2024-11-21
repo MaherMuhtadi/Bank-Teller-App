@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bar, Pie } from "react-chartjs-2";
+import { Pie } from "react-chartjs-2";
 import {
     Chart as ChartJS,
     ArcElement,
@@ -12,7 +12,7 @@ import {
 import LoadingAnimation from "../Components/LoadingAnimation";
 import ErrorAlert from "../Components/ErrorAlert";
 
-function Summaries() {
+function TransactionCounts() {
     const apiUrl = "http://127.0.0.1:8000/account/";
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState(null);
@@ -68,38 +68,6 @@ function Summaries() {
         LinearScale
     );
 
-    // Bar Chart Data for amounts
-    const barChartData = {
-        labels: ["Withdrawals", "Deposits"], // X-axis labels for each bar
-        datasets: [
-            {
-                label: "Withdrawals",
-                data: [data.total_withdrawals_amount],
-                backgroundColor: "rgba(255, 99, 132, 0.6)",
-                borderColor: "rgba(255, 99, 132, 1)",
-                borderWidth: 1,
-            },
-            {
-                label: "Deposits",
-                data: [0, data.total_deposits_amount],
-                backgroundColor: "rgba(54, 162, 235, 0.6)",
-                borderColor: "rgba(54, 162, 235, 1)",
-                borderWidth: 1,
-            },
-        ],
-    };
-
-    const barChartOptions = {
-        scales: {
-            y: {
-                title: {
-                    display: true,
-                    text: "Total Amount ($)",
-                },
-            },
-        },
-    };
-
     // Pie Chart Data for counts
     const pieChartData = {
         labels: ["Deposits", "Withdrawals", "Transfers"],
@@ -127,10 +95,7 @@ function Summaries() {
     };
 
     return (
-        <div className="space-y-5 rounded-xl bg-neutral-50 w-1/4 p-4 shadow-md">
-            <h2 className="font-bold text-xl">Net Cash Flow</h2>
-            <p>Net: ${data.net_cash_flow}</p>
-            <Bar data={barChartData} options={barChartOptions} />
+        <div className="space-y-5 rounded-xl bg-neutral-50 p-4 shadow-md">
             <h2 className="font-bold text-xl">Transaction Counts</h2>
             <p>Total: {data.total_transactions_count}</p>
             <Pie data={pieChartData} />
@@ -138,4 +103,4 @@ function Summaries() {
     );
 }
 
-export default Summaries;
+export default TransactionCounts;

@@ -98,7 +98,7 @@ const router = createBrowserRouter([
 
 function App() {
     document.body.className =
-        "bg-gradient-to-l from-neutral-100/95 to-emerald-100/95";
+        "bg-gradient-to-l from-neutral-100/95 to-emerald-100/95 text-[#3f3f3f]";
     return (
         <div className="h-screen flex flex-col">
             <NavBar />
