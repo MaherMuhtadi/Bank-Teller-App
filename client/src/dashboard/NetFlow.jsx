@@ -18,6 +18,8 @@ function NetFlow() {
     const [fetchError, setFetchError] = useState(null);
     const [data, setData] = useState({});
 
+    const [chartVisible, setChartVisible] = useState(true);
+
     async function getData() {
         try {
             const response = await fetch(apiUrl + "transaction_summary/", {
@@ -103,8 +105,31 @@ function NetFlow() {
     return (
         <div className="space-y-5 rounded-xl bg-neutral-50 p-4 shadow-md">
             <h2 className="font-bold text-xl">Net Cash Flow</h2>
-            <p>Net: ${data.net_cash_flow}</p>
-            <Bar data={barChartData} options={barChartOptions} />
+
+            <div className="flex justify-between">
+                <p>Net: ${data.net_cash_flow}</p>
+                <label
+                    className="flex space-x-1"
+                    htmlFor="net-cash-flow-display"
+                >
+                    <input
+                        type="checkbox"
+                        id="net-cash-flow-display"
+                        checked={chartVisible}
+                        onClick={() => setChartVisible(!chartVisible)}
+                    />
+                    <p>Visualize</p>
+                </label>
+            </div>
+
+            <div {...(chartVisible ? {} : { hidden: true })}>
+                <Bar data={barChartData} options={barChartOptions} />
+            </div>
+
+            <div {...(chartVisible ? { hidden: true } : {})}>
+                <p>Total Withdrawals: ${data.total_withdrawals_amount}</p>
+                <p>Total Deposits: ${data.total_deposits_amount}</p>
+            </div>
         </div>
     );
 }

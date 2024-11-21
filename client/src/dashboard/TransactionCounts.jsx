@@ -18,6 +18,8 @@ function TransactionCounts() {
     const [fetchError, setFetchError] = useState(null);
     const [data, setData] = useState({});
 
+    const [chartVisible, setChartVisible] = useState(true);
+
     async function getData() {
         try {
             const response = await fetch(apiUrl + "transaction_summary/", {
@@ -97,8 +99,32 @@ function TransactionCounts() {
     return (
         <div className="space-y-5 rounded-xl bg-neutral-50 p-4 shadow-md">
             <h2 className="font-bold text-xl">Transaction Counts</h2>
-            <p>Total: {data.total_transactions_count}</p>
-            <Pie data={pieChartData} />
+
+            <div className="flex justify-between">
+                <p>Total: {data.total_transactions_count}</p>
+                <label
+                    className="flex space-x-1"
+                    htmlFor="transactions-count-display"
+                >
+                    <input
+                        type="checkbox"
+                        id="transactions-count-display"
+                        checked={chartVisible}
+                        onClick={() => setChartVisible(!chartVisible)}
+                    />
+                    <p>Visualize</p>
+                </label>
+            </div>
+
+            <div {...(chartVisible ? {} : { hidden: true })}>
+                <Pie data={pieChartData} />
+            </div>
+
+            <div {...(chartVisible ? { hidden: true } : {})}>
+                <p>Deposits: {data.total_deposits_count}</p>
+                <p>Withdrawals: {data.total_withdrawals_count}</p>
+                <p>Transfers: {data.total_transfer_count}</p>
+            </div>
         </div>
     );
 }
