@@ -24,7 +24,9 @@ function Receipt({ transaction, close }) {
             </div>
             <p>
                 <span className="font-bold">Account ID:</span>{" "}
-                {transaction.from_account_id}
+                {transaction.transaction_type.toLowerCase() === "deposit"
+                    ? transaction.to_account_id
+                    : transaction.from_account_id}
             </p>
             <p>
                 <span className="font-bold">Tansaction ID:</span>{" "}
@@ -37,7 +39,7 @@ function Receipt({ transaction, close }) {
             <p>
                 <span className="font-bold">Amount:</span> {transaction.amount}
             </p>
-            {transaction.to_account_id && (
+            {transaction.transaction_type.toLowerCase() === "transfer" && (
                 <p>
                     <span className="font-bold">To:</span>{" "}
                     {transaction.to_account_id}
