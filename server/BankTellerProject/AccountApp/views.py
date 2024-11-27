@@ -9,7 +9,6 @@ import json
 import random
 from .serializers import ClientSerializer, AccountSerializer, BranchSerializer, BranchDropDownSerializer, ProductDropDownSerializer, CreateClientSerializer, TransactionSerializer, TellerSerializer
 from .models import Client, Account, Branch, Product, Transaction, Teller, Schedule
-from datetime import datetime
 # Create your views here.
 
 @csrf_exempt
@@ -125,6 +124,7 @@ def create_transaction(request):
         from_account_id = data.get('from_account_id')
         to_account_id = data.get('to_account_id')
         amount = data.get('amount')
+        timestamp = data.get('timestamp')
 
         # Check if the from_account and to_account exist
         try:
@@ -158,7 +158,7 @@ def create_transaction(request):
             from_account_id=from_account,
             to_account_id=to_account,
             amount=amount,
-            timestamp=datetime.now()
+            timestamp=timestamp
         )
 
         # Save the Transaction object to the database
@@ -205,6 +205,7 @@ def depositMoney(request):
         # clientId = data.get('client_id')
         account_id = data.get('account_no')
         amount = data.get('amount')
+        timestamp = data.get('timestamp')
 
         # Check if the account exists
         try:
@@ -230,7 +231,7 @@ def depositMoney(request):
             transaction_type='Deposit',
             to_account_id=account,
             amount=amount,
-            timestamp=datetime.now()
+            timestamp=timestamp
         )
         # Save the Transaction object to the database
         transaction.save()
@@ -256,6 +257,7 @@ def withdrawMoney(request):
         # clientId = data.get('client_id')
         account_id = data.get('account_no')
         amount = data.get('amount')
+        timestamp = data.get('timestamp')
 
         # Check if the account exists
         try:
@@ -284,7 +286,7 @@ def withdrawMoney(request):
             transaction_type='Withdraw',
             from_account_id=account,
             amount=amount,
-            timestamp=datetime.now()
+            timestamp=timestamp
         )
         # Save the Transaction object to the database
         transaction.save()

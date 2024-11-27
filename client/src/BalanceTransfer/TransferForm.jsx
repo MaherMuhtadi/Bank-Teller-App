@@ -16,6 +16,7 @@ function TransferForm({ client_id, password }) {
         from_account_id: "",
         to_account_id: "",
         amount: 0,
+        timestamp: new Date().toISOString(),
     });
 
     async function getAccounts() {
@@ -85,6 +86,10 @@ function TransferForm({ client_id, password }) {
     }, []); // Empty dependency array to run only once when the component mounts
 
     const transferAmount = async () => {
+        setFormData((prevValues) => ({
+            ...prevValues,
+            timestamp: new Date().toISOString(),
+        }));
         try {
             const response = await fetch(apiUrl + "transaction/", {
                 method: "POST",

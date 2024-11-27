@@ -17,6 +17,7 @@ function CashForm({ client_id, password }) {
         transaction_type: transaction_types[0],
         account_id: "",
         amount: 0,
+        timestamp: new Date().toISOString(),
     });
 
     async function getAccounts() {
@@ -87,6 +88,10 @@ function CashForm({ client_id, password }) {
 
     const transferAmount = async (type, transferData) => {
         let apiRoute = type === "Deposit" ? "deposit/" : "withdraw/";
+        setFormData((prevValues) => ({
+            ...prevValues,
+            timestamp: new Date().toISOString(),
+        }));
         try {
             const response = await fetch(apiUrl + apiRoute, {
                 method: "POST",
