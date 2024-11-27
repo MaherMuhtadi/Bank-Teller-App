@@ -164,19 +164,10 @@ def create_transaction(request):
         # Save the Transaction object to the database
         transaction.save()
 
-        # Prepare the JSON response
-        transaction_serializer = TransactionSerializer(transaction)
-        from_account_serializer = AccountSerializer(from_account)
-        to_account_serializer = AccountSerializer(to_account)
-
-        response_data = {
-            'transaction_id': transaction.transaction_id,
-            'from_account': from_account_serializer.data,
-            'to_account': to_account_serializer.data,
-            'transaction_details': transaction_serializer.data
-        }
-
-        return JsonResponse(response_data, status=201)
+        # Return a JSON response with the updated balance and transaction details
+        response_data = TransactionSerializer(transaction).data
+        response_data['updated_balance'] = from_account.balance
+        return JsonResponse(response_data, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
@@ -237,15 +228,8 @@ def depositMoney(request):
         transaction.save()
 
         # Return a JSON response with the updated balance and transaction details
-        response_data = {
-            'account_no': account_id,
-            'updated_balance': account.balance,
-            'transaction_id': transaction.transaction_id,
-            'transaction_type': transaction.transaction_type,
-            'amount': transaction.amount,
-            'timestamp': transaction.timestamp
-        }
-
+        response_data = TransactionSerializer(transaction).data
+        response_data['updated_balance'] = account.balance
         return JsonResponse(response_data, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
@@ -292,14 +276,8 @@ def withdrawMoney(request):
         transaction.save()
 
         # Return a JSON response with the updated balance and transaction details
-        response_data = {
-            'account_no': account_id,
-            'updated_balance': account.balance,
-            'transaction_id': transaction.transaction_id,
-            'transaction_type': transaction.transaction_type,
-            'amount': transaction.amount,
-            'timestamp': transaction.timestamp
-        }
+        response_data = TransactionSerializer(transaction).data
+        response_data['updated_balance'] = account.balance
         return JsonResponse(response_data, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
