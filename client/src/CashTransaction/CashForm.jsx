@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import LoadingAnimation from "../Components/LoadingAnimation";
 import ErrorAlert from "../Components/ErrorAlert";
+import Receipt from "../Components/Receipt";
 
 function CashForm({ client_id, password }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
@@ -19,6 +20,8 @@ function CashForm({ client_id, password }) {
         amount: 0,
         timestamp: new Date().toISOString(),
     });
+
+    const [transaction_details, setTransactionDetails] = useState(null);
 
     async function getAccounts() {
         try {
@@ -88,10 +91,6 @@ function CashForm({ client_id, password }) {
 
     const transferAmount = async (type, transferData) => {
         let apiRoute = type === "Deposit" ? "deposit/" : "withdraw/";
-        setFormData((prevValues) => ({
-            ...prevValues,
-            timestamp: new Date().toISOString(),
-        }));
         try {
             const response = await fetch(apiUrl + apiRoute, {
                 method: "POST",
@@ -117,15 +116,20 @@ function CashForm({ client_id, password }) {
         let transferData = {
             account_no: formData.account_id,
             amount: formData.amount,
+            timestamp: new Date().toISOString(),
         };
         try {
             const data = await transferAmount(type, transferData);
             if (data) {
-                alert("Cash transferred successfully!");
+                setTransactionDetails(data);
             }
         } catch (error) {
             setSubmissionError(error.message);
         }
+    };
+
+    const clearTransactionDetails = () => {
+        setTransactionDetails(null);
     };
 
     if (productsLoading || accountsLoading) {
@@ -137,10 +141,20 @@ function CashForm({ client_id, password }) {
     }
 
     return (
-        <form className="flex flex-col space-y-6 w-1/2" onSubmit={handleSubmit}>
+        <form
+            className="relative flex flex-col space-y-6 w-1/2"
+            onSubmit={handleSubmit}
+        >
             <h2 className="font-bold text-xl text-center">Cash Transaction</h2>
 
             {submissionError && <ErrorAlert error={submissionError} />}
+
+            {transaction_details && (
+                <Receipt
+                    transaction={transaction_details}
+                    close={clearTransactionDetails}
+                />
+            )}
 
             <div className="flex flex-col space-y-5">
                 <label htmlFor="cash_transaction_type">Transaction Type</label>
