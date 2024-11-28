@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import LoadingAnimation from "./LoadingAnimation";
-import ErrorAlert from "./ErrorAlert";
+import LoadingSpinner from "../Components/LoadingSpinner";
+import ErrorAlert from "../Components/ErrorAlert";
 
 function TransactionHistory({ account_id, product_name, close }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
@@ -49,11 +49,11 @@ function TransactionHistory({ account_id, product_name, close }) {
     }, []); // Run only once when the component mounts
 
     if (loading) {
-        return <LoadingAnimation />; // Show loading message while data is being fetched
+        return <LoadingSpinner />; // Show loading message while data is being fetched
     }
 
     return (
-        <div className="bg-neutral-50 p-6 rounded-xl w-3/5 min-w-fit shadow-md space-y-4">
+        <div className="bg-neutral-50 p-6 rounded-xl w-3/5 min-w-fit shadow-md space-y-5">
             <img
                 src="back.svg"
                 alt="Back"
@@ -67,7 +67,7 @@ function TransactionHistory({ account_id, product_name, close }) {
             {fetchError && <ErrorAlert message={fetchError} />}
 
             {!fetchError && (
-                <div className="space-y-4">
+                <div className="space-y-5">
                     <div className="flex justify-center space-x-4">
                         <button
                             className={`p-2 w-fit rounded-md text-white ${
@@ -88,8 +88,8 @@ function TransactionHistory({ account_id, product_name, close }) {
                     </div>
 
                     {showDebit && (
-                        <div className="space-y-4">
-                            <h3 className="font-bold text-lg italic">
+                        <div className="space-y-5">
+                            <h3 className="font-semibold text-lg">
                                 Debit Transactions
                             </h3>
                             {debitList.length > 0 ? (
@@ -174,8 +174,8 @@ function TransactionHistory({ account_id, product_name, close }) {
                     )}
 
                     {!showDebit && (
-                        <div className="space-y-4">
-                            <h3 className="font-bold text-lg italic">
+                        <div className="space-y-5">
+                            <h3 className="font-semibold text-lg">
                                 Credit Transactions
                             </h3>
                             {creditList.length > 0 ? (

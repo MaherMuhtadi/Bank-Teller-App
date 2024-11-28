@@ -20,20 +20,10 @@ class BranchSerializer(serializers.ModelSerializer):
         model = Branch
         fields = "__all__"
 
-class BranchDropDownSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Branch
-        fields = ['branch_id', 'branch_name']
-
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = "__all__"
-
-class ProductDropDownSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = ['product_id', 'product_name']
 
 class TellerSerializer(serializers.ModelSerializer):
     class Meta:

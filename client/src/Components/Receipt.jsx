@@ -70,37 +70,38 @@ function Receipt({ transaction, close }) {
                 />
             </div>
             <p>
-                <span className="font-bold">Account ID:</span>{" "}
+                <span className="font-semibold">Account ID:</span>{" "}
                 {transaction.transaction_type.toLowerCase() === "deposit"
                     ? transaction.to_account_id
                     : transaction.from_account_id}
             </p>
             <p>
-                <span className="font-bold">Tansaction ID:</span>{" "}
+                <span className="font-semibold">Tansaction ID:</span>{" "}
                 {transaction.transaction_id}
             </p>
             <p>
-                <span className="font-bold">Transaction Type:</span>{" "}
+                <span className="font-semibold">Transaction Type:</span>{" "}
                 {transaction.transaction_type}
             </p>
             <p>
-                <span className="font-bold">Amount:</span> {transaction.amount}
+                <span className="font-semibold">Amount:</span>{" "}
+                {transaction.amount}
             </p>
             {transaction.transaction_type.toLowerCase() === "transfer" && (
                 <p>
-                    <span className="font-bold">To:</span>{" "}
+                    <span className="font-semibold">To:</span>{" "}
                     {transaction.to_account_id}
                 </p>
             )}
             <p>
-                <span className="font-bold">New Balance:</span>{" "}
+                <span className="font-semibold">New Balance:</span>{" "}
                 {transaction.updated_balance}
             </p>
             <p>
-                <span className="font-bold">Date:</span> {formattedDate}
+                <span className="font-semibold">Date:</span> {formattedDate}
             </p>
             <p>
-                <span className="font-bold">Time:</span> {formattedTime}
+                <span className="font-semibold">Time:</span> {formattedTime}
             </p>
             <div className="flex justify-end">
                 <img
