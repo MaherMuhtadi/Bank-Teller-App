@@ -7,19 +7,19 @@ from django.db.models import Sum  # Import the Sum function
 
 import json
 import random
-from .serializers import ClientSerializer, AccountSerializer, BranchSerializer, BranchDropDownSerializer, ProductDropDownSerializer, CreateClientSerializer, TransactionSerializer, TellerSerializer
+from .serializers import ClientSerializer, AccountSerializer, BranchSerializer, ProductSerializer, CreateClientSerializer, TransactionSerializer, TellerSerializer
 from .models import Client, Account, Branch, Product, Transaction, Teller, Schedule
 # Create your views here.
 
 @csrf_exempt
 def get_branch_list(request):
     branches = Branch.objects.all()
-    serializer = BranchDropDownSerializer(branches, many=True)
+    serializer = BranchSerializer(branches, many=True)
     return JsonResponse(serializer.data, safe=False)
 @csrf_exempt
 def get_product_list(request):
     products = Product.objects.all()
-    serializer = ProductDropDownSerializer(products, many=True)
+    serializer = ProductSerializer(products, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 @csrf_exempt
