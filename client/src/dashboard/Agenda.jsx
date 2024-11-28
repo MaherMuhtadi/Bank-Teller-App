@@ -4,7 +4,7 @@ function Agenda() {
     const employeeId = sessionStorage.getItem("employee_id");
 
     // Placeholder dummy schedule list relevant to a bank teller
-    const scheduleList = [
+    const [scheduleList, setScheduleList] = useState([
         {
             schedule_id: "1",
             employee_id: employeeId,
@@ -49,11 +49,22 @@ function Agenda() {
             date: "2024-11-30",
             start_time: "1:00 PM",
         },
-    ];
+    ]);
 
     // State to track the current date being displayed
     const today = new Date().toISOString().split("T")[0];
     const [currentDate, setCurrentDate] = useState(today);
+
+    // State to toggle between agenda and form
+    const [isAddingTask, setIsAddingTask] = useState(false);
+
+    // State to hold new task details
+    const [newTask, setNewTask] = useState({
+        title: "",
+        description: "",
+        date: currentDate,
+        start_time: "",
+    });
 
     // Function to adjust the current date
     const adjustDate = (days) => {
@@ -83,55 +94,165 @@ function Agenda() {
         (event) => event.date === currentDate
     );
 
+    // Function to handle form input changes
+    const handleFormChange = (e) => {
+        const { name, value } = e.target;
+        setNewTask((prev) => ({ ...prev, [name]: value }));
+    };
+
+    // Utility function to convert 24-hour time to AM/PM format
+    const toAmPmFormat = (time24) => {
+        const [hour, minute] = time24.split(":");
+        const hourInt = parseInt(hour, 10);
+        const period = hourInt >= 12 ? "PM" : "AM";
+        const hour12 = hourInt % 12 || 12; // Convert 0 to 12 for AM/PM format
+        return `${hour12}:${minute} ${period}`;
+    };
+
+    // Function to post new task
+    const postNewTask = () => {
+        const updatedScheduleList = [
+            ...scheduleList,
+            {
+                ...newTask,
+                start_time: toAmPmFormat(newTask.start_time), // Convert to AM/PM format
+                schedule_id: (scheduleList.length + 1).toString(),
+                employee_id: employeeId,
+            },
+        ];
+        setScheduleList(updatedScheduleList);
+        setIsAddingTask(false); // Switch back to schedule view
+    };
+
     return (
-        <div className="rounded-xl bg-neutral-50 w-full p-4 mt-16 shadow-md space-y-5">
-            <h2 className="font-bold text-xl text-right">Your Agenda</h2>
-
-            {/* Date Navigation and Calendar Widget */}
-            <div className="flex justify-between items-center">
-                <button
-                    onClick={() => adjustDate(-1)}
-                    className="bg-blue-500 text-white rounded-md w-20 p-2"
-                >
-                    Previous
-                </button>
-                <input
-                    type="date"
-                    value={currentDate}
-                    onChange={handleDateChange}
-                    className="rounded-md border text-lg p-1"
-                />
-                <button
-                    onClick={() => adjustDate(1)}
-                    className="bg-blue-500 text-white rounded-md w-20 p-2"
-                >
-                    Next
-                </button>
-            </div>
-
-            {/* Display Events */}
-            {eventsForDate.length > 0 ? (
-                <ul className="space-y-5">
-                    {eventsForDate.map((event) => (
-                        <li
-                            key={event.schedule_id}
-                            className="rounded-xl p-4 bg-gray-100 shadow-md"
+        <div className="rounded-xl bg-neutral-50 w-full p-4 mt-16 shadow-md">
+            {isAddingTask ? (
+                <div className="space-y-4">
+                    <h2 className="font-bold text-xl text-right">
+                        Add New Task
+                    </h2>
+                    <form className="space-y-4">
+                        <div>
+                            <label className="block font-medium">Title:</label>
+                            <input
+                                type="text"
+                                name="title"
+                                value={newTask.title}
+                                onChange={handleFormChange}
+                                className="w-full p-2 border rounded"
+                            />
+                        </div>
+                        <div>
+                            <label className="block font-medium">
+                                Description:
+                            </label>
+                            <textarea
+                                name="description"
+                                value={newTask.description}
+                                onChange={handleFormChange}
+                                className="w-full p-2 border rounded"
+                            ></textarea>
+                        </div>
+                        <div>
+                            <label className="block font-medium">Date:</label>
+                            <input
+                                type="date"
+                                name="date"
+                                value={newTask.date}
+                                onChange={handleFormChange}
+                                className="w-full p-2 border rounded"
+                            />
+                        </div>
+                        <div>
+                            <label className="block font-medium">
+                                Start Time:
+                            </label>
+                            <input
+                                type="time"
+                                name="start_time"
+                                value={newTask.start_time}
+                                onChange={handleFormChange}
+                                className="w-full p-2 border rounded"
+                            />
+                        </div>
+                    </form>
+                    <div className="flex justify-end space-x-2 mt-4">
+                        <button
+                            onClick={() => setIsAddingTask(false)}
+                            className="bg-gray-500 text-white rounded-md px-4 py-2"
                         >
-                            <h3 className="font-semibold text-lg">
-                                {event.title}
-                            </h3>
-                            <p>{event.description}</p>
-
-                            <div className="flex justify-end">
-                                <span className="text-sm">
-                                    {event.start_time}
-                                </span>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+                            Back
+                        </button>
+                        <button
+                            onClick={postNewTask}
+                            className="bg-blue-500 text-white rounded-md px-4 py-2"
+                        >
+                            Post
+                        </button>
+                    </div>
+                </div>
             ) : (
-                <p className="text-center">No tasks scheduled for this day.</p>
+                <div className="space-y-5">
+                    <h2 className="font-bold text-xl text-right">
+                        Your Agenda
+                    </h2>
+
+                    {/* Date Navigation and Calendar Widget */}
+                    <div className="flex justify-between items-center">
+                        <button
+                            onClick={() => adjustDate(-1)}
+                            className="bg-blue-500 text-white rounded-md w-20 p-2"
+                        >
+                            Previous
+                        </button>
+                        <input
+                            type="date"
+                            value={currentDate}
+                            onChange={handleDateChange}
+                            className="rounded-md border text-lg p-1"
+                        />
+                        <button
+                            onClick={() => adjustDate(1)}
+                            className="bg-blue-500 text-white rounded-md w-20 p-2"
+                        >
+                            Next
+                        </button>
+                    </div>
+
+                    {/* Add Task Button */}
+                    <button
+                        onClick={() => setIsAddingTask(true)}
+                        className="bg-green-500 text-white rounded-md px-4 py-2 mt-4"
+                    >
+                        Add Task
+                    </button>
+
+                    {/* Display Events */}
+                    {eventsForDate.length > 0 ? (
+                        <ul className="space-y-5">
+                            {eventsForDate.map((event) => (
+                                <li
+                                    key={event.schedule_id}
+                                    className="rounded-xl p-4 bg-gray-100 shadow-md"
+                                >
+                                    <h3 className="font-semibold text-lg">
+                                        {event.title}
+                                    </h3>
+                                    <p>{event.description}</p>
+                                    <div className="flex justify-end">
+                                        <span className="text-sm">
+                                            {event.start_time}
+                                        </span>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="text-center">
+                            No tasks scheduled for this day.
+                        </p>
+                    )}
+                </div>
             )}
         </div>
     );
