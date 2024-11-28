@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import LoadingAnimation from "../Components/LoadingAnimation";
+import LoadingSpinner from "../Components/LoadingSpinner";
 import ErrorAlert from "../Components/ErrorAlert";
 
 function TransactionHistory({ account_id, product_name, close }) {
@@ -49,7 +49,7 @@ function TransactionHistory({ account_id, product_name, close }) {
     }, []); // Run only once when the component mounts
 
     if (loading) {
-        return <LoadingAnimation />; // Show loading message while data is being fetched
+        return <LoadingSpinner />; // Show loading message while data is being fetched
     }
 
     return (

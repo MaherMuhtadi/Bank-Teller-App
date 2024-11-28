@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import LoadingAnimation from "../Components/LoadingAnimation";
+import LoadingSpinner from "../Components/LoadingSpinner";
 import ErrorAlert from "../Components/ErrorAlert";
 
 function ClientProfile({ client }) {
@@ -42,7 +42,7 @@ function ClientProfile({ client }) {
     }, []); // Run only once when the component mounts
 
     if (branchesLoading) {
-        return <LoadingAnimation />; // Show loading message while data is being fetched
+        return <LoadingSpinner />; // Show loading message while data is being fetched
     }
 
     if (fetchError) {

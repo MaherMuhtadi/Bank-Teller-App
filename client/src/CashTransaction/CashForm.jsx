@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import LoadingAnimation from "../Components/LoadingAnimation";
+import LoadingSpinner from "../Components/LoadingSpinner";
 import ErrorAlert from "../Components/ErrorAlert";
 import Receipt from "../Components/Receipt";
 
@@ -133,7 +133,7 @@ function CashForm({ client_id, password }) {
     };
 
     if (productsLoading || accountsLoading) {
-        return <LoadingAnimation />; // Show loading message while data is being fetched
+        return <LoadingSpinner />; // Show loading message while data is being fetched
     }
 
     if (fetchError) {

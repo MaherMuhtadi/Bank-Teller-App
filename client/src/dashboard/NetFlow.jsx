@@ -9,7 +9,7 @@ import {
     CategoryScale,
     LinearScale,
 } from "chart.js";
-import LoadingAnimation from "../Components/LoadingAnimation";
+import LoadingSpinner from "../Components/LoadingSpinner";
 import ErrorAlert from "../Components/ErrorAlert";
 
 function NetFlow() {
@@ -53,7 +53,7 @@ function NetFlow() {
     }, []);
 
     if (loading) {
-        return <LoadingAnimation />;
+        return <LoadingSpinner />;
     }
 
     if (fetchError) {

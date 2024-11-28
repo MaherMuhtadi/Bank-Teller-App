@@ -1,4 +1,4 @@
-function LoadingAnimation() {
+function LoadingSpinner() {
     return (
         <div className="flex flex-col justify-center items-center h-full space-y-1">
             <h2 className="font-bold text-xl">Loading</h2>
@@ -7,4 +7,4 @@ function LoadingAnimation() {
     );
 }
 
-export default LoadingAnimation;
+export default LoadingSpinner;

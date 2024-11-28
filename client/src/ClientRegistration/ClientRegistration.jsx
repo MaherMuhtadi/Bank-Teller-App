@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import LoadingAnimation from "../Components/LoadingAnimation";
+import LoadingSpinner from "../Components/LoadingSpinner";
 import ProfileInformation from "./ProfileInformation";
 import BackgroundInformation from "./BackgroundInformation";
 import NomineeInformation from "./NomineeInformation";
@@ -220,7 +220,7 @@ function ClientRegistration() {
     };
 
     if (branchesLoading || productsLoading) {
-        return <LoadingAnimation />; // Show loading message while data is being fetched
+        return <LoadingSpinner />; // Show loading message while data is being fetched
     }
 
     if (fetchError) {
