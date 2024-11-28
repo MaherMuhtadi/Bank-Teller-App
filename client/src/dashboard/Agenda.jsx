@@ -127,67 +127,71 @@ function Agenda() {
     return (
         <div className="rounded-xl bg-neutral-50 w-full p-4 mt-16 shadow-md">
             {isAddingTask ? (
-                <div className="space-y-4">
+                <div className="space-y-5">
                     <h2 className="font-bold text-xl text-right">
                         Add New Task
                     </h2>
-                    <form className="space-y-4">
-                        <div>
-                            <label className="block font-medium">Title:</label>
+                    <form className="space-y-5">
+                        <div className="flex flex-col space-y-5">
+                            <label htmlFor="agenda-title">Title</label>
                             <input
+                                id="agenda-title"
                                 type="text"
                                 name="title"
                                 value={newTask.title}
                                 onChange={handleFormChange}
-                                className="w-full p-2 border rounded"
+                                className="rounded-md border text-lg p-1"
                             />
                         </div>
-                        <div>
-                            <label className="block font-medium">
-                                Description:
+                        <div className="flex flex-col space-y-5">
+                            <label htmlFor="agenda-description">
+                                Description
                             </label>
                             <textarea
+                                id="agenda-description"
                                 name="description"
                                 value={newTask.description}
                                 onChange={handleFormChange}
-                                className="w-full p-2 border rounded"
+                                className="rounded-md border text-lg p-1"
                             ></textarea>
                         </div>
-                        <div>
-                            <label className="block font-medium">Date:</label>
+                        <div className="flex flex-col space-y-5">
+                            <label htmlFor="agenda-date">Date</label>
                             <input
+                                id="agenda-date"
                                 type="date"
                                 name="date"
                                 value={newTask.date}
                                 onChange={handleFormChange}
-                                className="w-full p-2 border rounded"
+                                className="rounded-md border text-lg p-1"
                             />
                         </div>
-                        <div>
-                            <label className="block font-medium">
-                                Start Time:
+                        <div className="flex flex-col space-y-5">
+                            <label htmlFor="agenda-start-time">
+                                Start Time
                             </label>
                             <input
+                                id="agenda-start-time"
                                 type="time"
                                 name="start_time"
                                 value={newTask.start_time}
                                 onChange={handleFormChange}
-                                className="w-full p-2 border rounded"
+                                className="rounded-md border text-lg p-1"
                             />
                         </div>
                     </form>
-                    <div className="flex justify-end space-x-2 mt-4">
+                    <div className="flex justify-end space-x-2">
                         <button
                             onClick={() => setIsAddingTask(false)}
-                            className="bg-gray-500 text-white rounded-md px-4 py-2"
+                            className="bg-gray-400 p-2 w-fit rounded-md text-white"
                         >
                             Back
                         </button>
                         <button
                             onClick={postNewTask}
-                            className="bg-blue-500 text-white rounded-md px-4 py-2"
+                            className="bg-blue-500 p-2 w-fit rounded-md text-white"
                         >
-                            Post
+                            Add
                         </button>
                     </div>
                 </div>
