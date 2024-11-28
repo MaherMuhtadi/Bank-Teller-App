@@ -19,6 +19,7 @@ A CRM for bank employees to manage clients and accounts, conduct transactions, a
   - [Installation](#installation)
     - [Frontend](#frontend)
     - [Fraud Detection Model](#fraud-detection-model-1)
+- [Installation:Backend:](#installationbackend)
 - [Setting Up and Running the Project](#setting-up-and-running-the-project)
   - [Prerequisites](#prerequisites)
   - [Steps for Setting Up the Environment](#steps-for-setting-up-the-environment)
@@ -149,7 +150,7 @@ Check if all the necessary libraries are installed.
 pip show pandas numpy scikit-learn matplotlib
 ```
 
-**Installation:Backend:**
+# Installation:Backend:
 
 # Setting Up and Running the Project
 
