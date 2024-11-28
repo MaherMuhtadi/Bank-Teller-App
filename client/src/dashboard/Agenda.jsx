@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 
 function Agenda() {
+    const employeeId = sessionStorage.getItem("employee_id");
+
     // Placeholder dummy schedule list relevant to a bank teller
     const scheduleList = [
         {
             schedule_id: "1",
-            employee_id: "BT101",
+            employee_id: employeeId,
             title: "Morning Client Appointments",
             description:
                 "Assist clients with account inquiries and new account openings.",
@@ -14,7 +16,7 @@ function Agenda() {
         },
         {
             schedule_id: "2",
-            employee_id: "BT101",
+            employee_id: employeeId,
             title: "Cash Reconciliation",
             description:
                 "Balance cash drawer and verify deposits from the previous day.",
@@ -23,7 +25,7 @@ function Agenda() {
         },
         {
             schedule_id: "3",
-            employee_id: "BT101",
+            employee_id: employeeId,
             title: "Compliance Training",
             description:
                 "Participate in mandatory training on fraud detection and compliance policies.",
@@ -32,7 +34,7 @@ function Agenda() {
         },
         {
             schedule_id: "4",
-            employee_id: "BT101",
+            employee_id: employeeId,
             title: "Afternoon Transactions",
             description:
                 "Process deposits, withdrawals, and wire transfers for clients.",
@@ -41,7 +43,7 @@ function Agenda() {
         },
         {
             schedule_id: "5",
-            employee_id: "BT101",
+            employee_id: employeeId,
             title: "Weekend Planning",
             description: "Plan next week's schedule and review targets.",
             date: "2024-11-30",
