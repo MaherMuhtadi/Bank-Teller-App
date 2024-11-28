@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NavBar from "./Components/NavBar";
 import Dashboard from "./Dashboard/Dashboard";
 import Products from "./Products/Products";
+import Colleagues from "./Colleagues/Colleagues";
 import ClientRegistration from "./ClientRegistration/ClientRegistration";
 import ClientInfo from "./ClientInfo/ClientInfo";
 import BalanceTransfer from "./BalanceTransfer/BalanceTransfer";
@@ -31,7 +32,7 @@ const router = createBrowserRouter([
         path: "/colleagues",
         element: (
             <ProtectedRoute>
-                <Dashboard />
+                <Colleagues />
             </ProtectedRoute>
         ),
     },
