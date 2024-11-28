@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import LoadingAnimation from "../Components/LoadingAnimation";
 import ErrorAlert from "../Components/ErrorAlert";
-import TransactionHistory from "../Components/TransactionHistory";
+import TransactionHistory from "./TransactionHistory";
 
 function Accounts({ client_id, password }) {
     const apiUrl = "http://127.0.0.1:8000/account/";

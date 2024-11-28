@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import LoadingAnimation from "./LoadingAnimation";
-import ErrorAlert from "./ErrorAlert";
+import LoadingAnimation from "../Components/LoadingAnimation";
+import ErrorAlert from "../Components/ErrorAlert";
 
 function TransactionHistory({ account_id, product_name, close }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
