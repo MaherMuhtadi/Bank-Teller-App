@@ -151,7 +151,7 @@ function Accounts({ client_id, password }) {
                                 <li key={account.account_id}>
                                     <div className="flex justify-between">
                                         <div>
-                                            <span className="font-bold">
+                                            <span className="font-semibold">
                                                 Account ID:
                                             </span>{" "}
                                             {account.account_id}
@@ -169,7 +169,9 @@ function Accounts({ client_id, password }) {
                                             View Transactions
                                         </span>
                                     </div>
-                                    <span className="font-bold">Balance:</span>{" "}
+                                    <span className="font-semibold">
+                                        Balance:
+                                    </span>{" "}
                                     ${account.balance}
                                 </li>
                             ))}

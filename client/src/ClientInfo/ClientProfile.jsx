@@ -52,32 +52,32 @@ function ClientProfile({ client }) {
     return (
         <div className="flex flex-col space-y-6 w-1/3 bg-neutral-50 p-4 rounded-xl shadow-md">
             <h2 className="font-bold text-xl text-center">Client Profile</h2>
-            <h3 className="font-bold text-lg italic">Profile Information</h3>
+            <h3 className="font-semibold text-lg">Profile Information</h3>
             <div>
                 <p>
-                    <span className="font-bold">Client ID:</span>{" "}
+                    <span className="font-semibold">Client ID:</span>{" "}
                     {client.client_id}
                 </p>
                 <p>
-                    <span className="font-bold">First Name:</span>{" "}
+                    <span className="font-semibold">First Name:</span>{" "}
                     {client.first_name}
                 </p>
                 <p>
-                    <span className="font-bold">Last Name:</span>{" "}
+                    <span className="font-semibold">Last Name:</span>{" "}
                     {client.last_name}
                 </p>
                 <p>
-                    <span className="font-bold">Email:</span> {client.email}
+                    <span className="font-semibold">Email:</span> {client.email}
                 </p>
                 <p>
-                    <span className="font-bold">Phone:</span> {client.phone}
+                    <span className="font-semibold">Phone:</span> {client.phone}
                 </p>
                 <p>
-                    <span className="font-bold">Date of Birth:</span>{" "}
+                    <span className="font-semibold">Date of Birth:</span>{" "}
                     {client.dob}
                 </p>
                 <p>
-                    <span className="font-bold">Branch:</span>{" "}
+                    <span className="font-semibold">Branch:</span>{" "}
                     {
                         branches.find((b) => b.branch_id === client.branch_id)
                             .branch_name
@@ -85,47 +85,48 @@ function ClientProfile({ client }) {
                 </p>
             </div>
 
-            <h3 className="font-bold text-lg italic">Background Information</h3>
+            <h3 className="font-semibold text-lg">Background Information</h3>
             <div>
                 <p>
-                    <span className="font-bold">Occupation:</span>{" "}
+                    <span className="font-semibold">Occupation:</span>{" "}
                     {client.occupation}
                 </p>
                 <p>
-                    <span className="font-bold">Residency:</span>{" "}
+                    <span className="font-semibold">Residency:</span>{" "}
                     {client.residency}
                 </p>
                 <p>
-                    <span className="font-bold">Government ID Type:</span>{" "}
+                    <span className="font-semibold">Government ID Type:</span>{" "}
                     {client.client_identification_document_type}
                 </p>
                 <p>
-                    <span className="font-bold">Government ID Number:</span>{" "}
+                    <span className="font-semibold">Government ID Number:</span>{" "}
                     {client.client_identification_document_number}
                 </p>
                 <p>
-                    <span className="font-bold">Address:</span> {client.address}
+                    <span className="font-semibold">Address:</span>{" "}
+                    {client.address}
                 </p>
             </div>
 
-            <h3 className="font-bold text-lg italic">Nominee Information</h3>
+            <h3 className="font-semibold text-lg">Nominee Information</h3>
             <div>
                 <p>
-                    <span className="font-bold">Nominee:</span>{" "}
+                    <span className="font-semibold">Nominee:</span>{" "}
                     {client.nominee_name}
                 </p>
                 <p>
-                    <span className="font-bold">Nominee Relationship:</span>{" "}
+                    <span className="font-semibold">Nominee Relationship:</span>{" "}
                     {client.nominee_relation}
                 </p>
                 <p>
-                    <span className="font-bold">
+                    <span className="font-semibold">
                         Nominee Government ID Type:
                     </span>{" "}
                     {client.nominee_identification_document_type}
                 </p>
                 <p>
-                    <span className="font-bold">
+                    <span className="font-semibold">
                         Nominee Government ID Number:
                     </span>{" "}
                     {client.nominee_identification_document_number}
