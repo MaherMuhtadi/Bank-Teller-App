@@ -165,7 +165,7 @@ Ensure you have the following installed:
    Start the Django server to launch the backend:
 
    ```bash
-   cd 'BankTellerProject'
+   cd BankTellerProject
    python manage.py runserver
    ```
 
