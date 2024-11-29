@@ -9,6 +9,13 @@ import json
 import random
 from .serializers import ClientSerializer, AccountSerializer, BranchSerializer, ProductSerializer, CreateClientSerializer, TransactionSerializer, TellerSerializer
 from .models import Client, Account, Branch, Product, Transaction, Teller, Schedule
+
+# For ml model
+from datetime import datetime
+import pandas as pd
+from sklearn.ensemble import IsolationForest
+from sklearn.preprocessing import LabelEncoder
+
 # Create your views here.
 
 @csrf_exempt
@@ -116,6 +123,53 @@ def get_account_list_for_a_client(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
+# Helper function to fetch historical transaction data
+def fetch_historical_data():
+    """
+    Fetch historical transaction data from the database.
+    """
+    transactions = Transaction.objects.all().values(
+        'amount',
+        'timestamp',
+        'from_account_id__balance',
+        'transaction_type',
+        'from_account_id__product_id__product_name'  # Assuming account type is derived from product name
+    )
+    df = pd.DataFrame(transactions)
+    if df.empty:
+        raise ValueError("No transaction data found in the database.")
+
+    # Rename columns for clarity
+    df.rename(columns={
+        'amount': 'amount',
+        'timestamp': 'timestamp',
+        'from_account_id__balance': 'balance',
+        'transaction_type': 'transaction_type',
+        'from_account_id__product_id__product_name': 'account_type'
+    }, inplace=True)
+
+    # Convert timestamp to hour for time-based patterns
+    df['hour'] = pd.to_datetime(df['timestamp']).dt.hour
+
+    # Encode categorical features (transaction_type and account_type)
+    label_encoders = {
+        'transaction_type': LabelEncoder(),
+        'account_type': LabelEncoder()
+    }
+    for column, encoder in label_encoders.items():
+        df[column] = encoder.fit_transform(df[column])
+
+    return df[['amount', 'hour', 'balance', 'transaction_type', 'account_type']]
+
+
+# Helper function to train the Isolation Forest model
+def train_model(data):
+    """
+    Train the Isolation Forest model using the provided data.
+    """
+    model = IsolationForest(n_estimators=100, contamination=0.1, random_state=42)
+    model.fit(data)
+    return model
 
 @csrf_exempt
 def create_transaction(request):
@@ -125,8 +179,9 @@ def create_transaction(request):
         to_account_id = data.get('to_account_id')
         amount = data.get('amount')
         timestamp = data.get('timestamp')
+        transaction_type = 'Transfer'
 
-        # Check if the from_account and to_account exist
+        # Check if the accounts exist
         try:
             from_account = Account.objects.get(account_id=from_account_id)
             to_account = Account.objects.get(account_id=to_account_id)
@@ -154,7 +209,7 @@ def create_transaction(request):
         # Create a new Transaction object
         transaction = Transaction(
             transaction_id=transaction_id,
-            transaction_type='Transfer',
+            transaction_type=transaction_type,
             from_account_id=from_account,
             to_account_id=to_account,
             amount=amount,
@@ -164,9 +219,31 @@ def create_transaction(request):
         # Save the Transaction object to the database
         transaction.save()
 
-        # Return a JSON response with the updated balance and transaction details
+        ''' Fraud detection
+        try:
+            historical_data = fetch_historical_data()
+            model = train_model(historical_data)
+        except ValueError as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+        # Prepare data for fraud detection
+        transaction_data = {
+            'amount': [amount],
+            'hour': [datetime.now().hour],
+            'balance': [from_account.balance],
+            'transaction_type': [LabelEncoder().fit(historical_data['transaction_type']).transform([transaction_type])[0]],
+            'account_type': [LabelEncoder().fit(historical_data['account_type']).transform(
+                [from_account.product_id.product_name])[0]]
+        }
+        df = pd.DataFrame(transaction_data)
+        prediction = model.predict(df)
+        is_fraud = prediction[0] == -1
+        '''
+
+        # Return a JSON response with the updated balance, fraud flag and transaction details
         response_data = TransactionSerializer(transaction).data
         response_data['updated_balance'] = from_account.balance
+        # response_data['fraud'] = is_fraud
         return JsonResponse(response_data, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)

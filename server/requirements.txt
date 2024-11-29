@@ -3,3 +3,5 @@ djangorestframework
 django-cors-headers
 dnspython
 pytest
+pandas
+scikit-learn

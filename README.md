@@ -19,24 +19,20 @@ A CRM for bank employees to manage clients and accounts, conduct transactions, a
   - [Installation](#installation)
     - [Frontend](#frontend)
     - [Backend](#backend)
-    - [Fraud Detection Model](#fraud-detection-model-1)
 
 ## Tech Stack
 
--   **Backend:**
-    -   Django (Server)
-    -   SQLite (Database)
-    -   Postman (API Testing)
--   **Machine Learning Model:**
-    -   Scikit Learn
-    -   Pandas
-    -   NumPy
-    -   Matplotlib
 -   **Frontend:**
     -   ReactJS (Client)
     -   Tailwind (Styling)
     -   React Router (Component Navigation)
     -   Chart.js (Data Visualizations)
+-   **Backend:**
+    -   Django (Server)
+    -   SQLite (Database)
+    -   Postman (API Testing)
+    -   Scikit Learn (Fraud Detection Model)
+    -   Pandas (Fraud Detection Model)
 
 ## Design
 
@@ -46,7 +42,8 @@ A CRM for bank employees to manage clients and accounts, conduct transactions, a
 
 ## Features
 
-### Fraud Detection Model
+### Fraud Detection Model 
+(Outdated Information)
 
 This model uses python to detect fraudulent transactions in the dataset. Using **Isolation Forest** from the `sklearn` library. It mainly identifies outliers in the various data topics and flags unusual transaction behaviors.
 
@@ -180,25 +177,3 @@ Ensure you have the following installed:
    Credentials:
    - Username: *admin*
    - Password: *admin*
-
-### Fraud Detection Model
-
-**Prerequisites:**
-
-Check if all the necessary libraries are installed.
-
-```bash
-pip show pandas numpy scikit-learn matplotlib
-```
-
-**Installation:**
-
-You can install these libraries using pip:
-
-```bash
-pip install pandas numpy scikit-learn matplotlib
-```
-
-Run the script `Fraud Detection Model.py` in a Python environment to see the fraud detection results printed to the console.
-
-View the scatter plot to visually assess the detected fraudulent transactions.
