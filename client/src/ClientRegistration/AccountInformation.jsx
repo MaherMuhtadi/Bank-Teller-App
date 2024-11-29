@@ -9,7 +9,7 @@ function AccountInformation({ formValues, setFormValues, branches, products }) {
 
     return (
         <div className="space-y-5">
-            <h3 className="font-bold text-lg italic">Account Information</h3>
+            <h3 className="font-semibold text-lg">Account Information</h3>
             <div className="flex flex-col space-y-5">
                 <label htmlFor="registration_branch">Branch</label>
                 <select

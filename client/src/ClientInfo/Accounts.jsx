@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import LoadingAnimation from "../Components/LoadingAnimation";
+import LoadingSpinner from "../Components/LoadingSpinner";
 import ErrorAlert from "../Components/ErrorAlert";
+import TransactionHistory from "./TransactionHistory";
 
 function Accounts({ client_id, password }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
@@ -11,6 +12,11 @@ function Accounts({ client_id, password }) {
 
     const [accounts, setAccounts] = useState([]);
     const [products, setProducts] = useState([]);
+
+    // State to manage currently viewed account and whether to show transactions
+    const [viewingTransactions, setViewingTransactions] = useState(false);
+    const [selectedAccount, setSelectedAccount] = useState(null);
+    const [selectedProductName, setSelectedProductName] = useState("");
 
     async function getAccounts() {
         try {
@@ -104,18 +110,32 @@ function Accounts({ client_id, password }) {
     };
 
     if (productsLoading || accountsLoading) {
-        return <LoadingAnimation />; // Show loading message while data is being fetched
+        return <LoadingSpinner />; // Show loading message while data is being fetched
     }
 
     if (fetchError) {
         return <ErrorAlert error={fetchError} />; // Display any error that occurs
     }
 
+    // Conditional rendering for the transaction history or account view
+    if (viewingTransactions && selectedAccount) {
+        return (
+            <TransactionHistory
+                account_id={selectedAccount.account_id}
+                product_name={selectedProductName}
+                close={() => setViewingTransactions(false)} // Function to close transaction view
+            />
+        );
+    }
+
     return (
         <div className="flex flex-col w-1/3 space-y-6">
             {products.map((product) => (
-                <details className="flex flex-col space-y-6 bg-neutral-50 p-4 rounded-xl shadow-md">
-                    <summary className="flex space-x-6">
+                <details
+                    key={product.product_id}
+                    className="flex flex-col space-y-6 bg-neutral-50 p-4 rounded-xl shadow-md"
+                >
+                    <summary className="flex space-x-6 cursor-pointer">
                         <img src="down-arrow.svg" alt="Drop Down Arrow" />
                         <h2 className="font-bold text-xl text-center">
                             {product.product_name} Accounts
@@ -129,20 +149,30 @@ function Accounts({ client_id, password }) {
                             )
                             .map((account) => (
                                 <li key={account.account_id}>
-                                    <div>
+                                    <div className="flex justify-between">
                                         <div>
-                                            <span className="font-bold">
+                                            <span className="font-semibold">
                                                 Account ID:
                                             </span>{" "}
                                             {account.account_id}
                                         </div>
-                                        <div>
-                                            <span className="font-bold">
-                                                Balance:
-                                            </span>{" "}
-                                            ${account.balance}
-                                        </div>
+                                        <span
+                                            className="hover:underline cursor-pointer"
+                                            onClick={() => {
+                                                setSelectedAccount(account);
+                                                setSelectedProductName(
+                                                    product.product_name
+                                                );
+                                                setViewingTransactions(true);
+                                            }}
+                                        >
+                                            View Transactions
+                                        </span>
                                     </div>
+                                    <span className="font-semibold">
+                                        Balance:
+                                    </span>{" "}
+                                    ${account.balance}
                                 </li>
                             ))}
                     </ol>

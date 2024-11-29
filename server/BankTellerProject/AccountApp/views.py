@@ -7,20 +7,26 @@ from django.db.models import Sum  # Import the Sum function
 
 import json
 import random
-from .serializers import ClientSerializer, AccountSerializer, BranchSerializer, BranchDropDownSerializer, ProductDropDownSerializer, CreateClientSerializer, TransactionSerializer, TellerSerializer
+from .serializers import ClientSerializer, AccountSerializer, BranchSerializer, ProductSerializer, CreateClientSerializer, TransactionSerializer, TellerSerializer
 from .models import Client, Account, Branch, Product, Transaction, Teller, Schedule
+
+# For ml model
 from datetime import datetime
+import pandas as pd
+from sklearn.ensemble import IsolationForest
+from sklearn.preprocessing import LabelEncoder
+
 # Create your views here.
 
 @csrf_exempt
 def get_branch_list(request):
     branches = Branch.objects.all()
-    serializer = BranchDropDownSerializer(branches, many=True)
+    serializer = BranchSerializer(branches, many=True)
     return JsonResponse(serializer.data, safe=False)
 @csrf_exempt
 def get_product_list(request):
     products = Product.objects.all()
-    serializer = ProductDropDownSerializer(products, many=True)
+    serializer = ProductSerializer(products, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 @csrf_exempt
@@ -165,7 +171,6 @@ def train_model(data):
     model.fit(data)
     return model
 
-
 @csrf_exempt
 def create_transaction(request):
     if request.method == 'POST':
@@ -173,7 +178,8 @@ def create_transaction(request):
         from_account_id = data.get('from_account_id')
         to_account_id = data.get('to_account_id')
         amount = data.get('amount')
-        transaction_type = data.get('transaction_type')
+        timestamp = data.get('timestamp')
+        transaction_type = 'Transfer'
 
         # Check if the accounts exist
         try:
@@ -207,11 +213,13 @@ def create_transaction(request):
             from_account_id=from_account,
             to_account_id=to_account,
             amount=amount,
-            timestamp=datetime.now()
+            timestamp=timestamp
         )
+
+        # Save the Transaction object to the database
         transaction.save()
 
-        # Fraud detection
+        ''' Fraud detection
         try:
             historical_data = fetch_historical_data()
             model = train_model(historical_data)
@@ -230,21 +238,13 @@ def create_transaction(request):
         df = pd.DataFrame(transaction_data)
         prediction = model.predict(df)
         is_fraud = prediction[0] == -1
+        '''
 
-        # Prepare the JSON response
-        transaction_serializer = TransactionSerializer(transaction)
-        from_account_serializer = AccountSerializer(from_account)
-        to_account_serializer = AccountSerializer(to_account)
-
-        response_data = {
-            'transaction_id': transaction.transaction_id,
-            'from_account': from_account_serializer.data,
-            'to_account': to_account_serializer.data,
-            'transaction_details': transaction_serializer.data,
-            'fraud': is_fraud
-        }
-
-        return JsonResponse(response_data, status=201)
+        # Return a JSON response with the updated balance, fraud flag and transaction details
+        response_data = TransactionSerializer(transaction).data
+        response_data['updated_balance'] = from_account.balance
+        # response_data['fraud'] = is_fraud
+        return JsonResponse(response_data, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
@@ -273,6 +273,7 @@ def depositMoney(request):
         # clientId = data.get('client_id')
         account_id = data.get('account_no')
         amount = data.get('amount')
+        timestamp = data.get('timestamp')
 
         # Check if the account exists
         try:
@@ -298,21 +299,14 @@ def depositMoney(request):
             transaction_type='Deposit',
             to_account_id=account,
             amount=amount,
-            timestamp=datetime.now()
+            timestamp=timestamp
         )
         # Save the Transaction object to the database
         transaction.save()
 
         # Return a JSON response with the updated balance and transaction details
-        response_data = {
-            'account_no': account_id,
-            'updated_balance': account.balance,
-            'transaction_id': transaction.transaction_id,
-            'transaction_type': transaction.transaction_type,
-            'amount': transaction.amount,
-            'timestamp': transaction.timestamp
-        }
-
+        response_data = TransactionSerializer(transaction).data
+        response_data['updated_balance'] = account.balance
         return JsonResponse(response_data, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
@@ -324,6 +318,7 @@ def withdrawMoney(request):
         # clientId = data.get('client_id')
         account_id = data.get('account_no')
         amount = data.get('amount')
+        timestamp = data.get('timestamp')
 
         # Check if the account exists
         try:
@@ -352,20 +347,14 @@ def withdrawMoney(request):
             transaction_type='Withdraw',
             from_account_id=account,
             amount=amount,
-            timestamp=datetime.now()
+            timestamp=timestamp
         )
         # Save the Transaction object to the database
         transaction.save()
 
         # Return a JSON response with the updated balance and transaction details
-        response_data = {
-            'account_no': account_id,
-            'updated_balance': account.balance,
-            'transaction_id': transaction.transaction_id,
-            'transaction_type': transaction.transaction_type,
-            'amount': transaction.amount,
-            'timestamp': transaction.timestamp
-        }
+        response_data = TransactionSerializer(transaction).data
+        response_data['updated_balance'] = account.balance
         return JsonResponse(response_data, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)

@@ -14,7 +14,7 @@ function NomineeInformation({
 
     return (
         <div className="space-y-5">
-            <h3 className="font-bold text-lg italic">Nominee Information</h3>
+            <h3 className="font-semibold text-lg">Nominee Information</h3>
 
             <label htmlFor="registration_nominee" className="flex space-x-6">
                 <p>Add Nominee</p>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import LoadingAnimation from "../Components/LoadingAnimation";
+import LoadingSpinner from "../Components/LoadingSpinner";
 import ErrorAlert from "../Components/ErrorAlert";
+import Receipt from "../Components/Receipt";
 
 function TransferForm({ client_id, password }) {
     const apiUrl = "http://127.0.0.1:8000/account/";
@@ -16,7 +17,10 @@ function TransferForm({ client_id, password }) {
         from_account_id: "",
         to_account_id: "",
         amount: 0,
+        timestamp: new Date().toISOString(),
     });
+
+    const [transaction_details, setTransactionDetails] = useState(null);
 
     async function getAccounts() {
         try {
@@ -85,6 +89,10 @@ function TransferForm({ client_id, password }) {
     }, []); // Empty dependency array to run only once when the component mounts
 
     const transferAmount = async () => {
+        setFormData((prevValues) => ({
+            ...prevValues,
+            timestamp: new Date().toISOString(),
+        }));
         try {
             const response = await fetch(apiUrl + "transaction/", {
                 method: "POST",
@@ -109,15 +117,19 @@ function TransferForm({ client_id, password }) {
         try {
             const data = await transferAmount();
             if (data) {
-                alert("Amount transferred successfully!");
+                setTransactionDetails(data);
             }
         } catch (error) {
             setSubmissionError(error.message);
         }
     };
 
+    const clearTransactionDetails = () => {
+        setTransactionDetails(null);
+    };
+
     if (productsLoading || accountsLoading) {
-        return <LoadingAnimation />; // Show loading message while data is being fetched
+        return <LoadingSpinner />; // Show loading message while data is being fetched
     }
 
     if (fetchError) {
@@ -125,10 +137,20 @@ function TransferForm({ client_id, password }) {
     }
 
     return (
-        <form className="flex flex-col space-y-6 w-1/2" onSubmit={handleSubmit}>
+        <form
+            className="relative flex flex-col space-y-6 w-1/2"
+            onSubmit={handleSubmit}
+        >
             <h2 className="font-bold text-xl text-center">Balance Transfer</h2>
 
             {submissionError && <ErrorAlert error={submissionError} />}
+
+            {transaction_details && (
+                <Receipt
+                    transaction={transaction_details}
+                    close={clearTransactionDetails}
+                />
+            )}
 
             <div className="flex flex-col space-y-5">
                 <label htmlFor="transfer_from">From Account</label>

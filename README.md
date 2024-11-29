@@ -18,6 +18,7 @@ A CRM for bank employees to manage clients and accounts, conduct transactions, a
       - [Expected Output](#expected-output)
   - [Installation](#installation)
     - [Frontend](#frontend)
+    - [Backend](#backend)
     - [Fraud Detection Model](#fraud-detection-model-1)
 
 ## Tech Stack
@@ -127,6 +128,58 @@ The dummy Client profile credentials for testing, as saved in `server/BankTeller
 **Deployment:**
 
 Use `npm run build` to build the finished project for production.
+
+### Backend
+
+**Prerequisites:**
+
+Ensure you have the following installed:
+
+- [Python](https://www.python.org/downloads/) (Version 3.x)
+- [Anaconda](https://www.anaconda.com/products/distribution) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
+- [pip](https://pip.pypa.io/en/stable/installation/)
+- Additional project-specific requirements (specified in `requirements.txt`)
+
+**Setting Up and Running the Backend:**
+
+1. **Create a New Conda Environment**:  
+   Create a new isolated environment named `test_env` with Python and the Anaconda distribution installed:
+
+   ```bash
+   conda create -n test_env python anaconda
+   ```
+
+2. **Activate the Environment**:  
+   Switch to the newly created environment:
+
+   ```bash
+   conda activate test_env
+   ```
+
+3. **Install Dependencies**:  
+   Navigate to the backend project directory and install the required dependencies:
+
+   ```bash
+   cd server
+   pip install -r requirements.txt
+   ```
+
+4. **Run the Development Server**:  
+   Start the Django server to launch the backend:
+
+   ```bash
+   cd 'BankTellerProject'
+   python manage.py runserver
+   ```
+
+5. **Access the Server**:  
+   Open a browser and navigate to the URL provided in the terminal output (typically `http://127.0.0.1:8000/`).
+   
+   Next, go to the `/admin` route to view all entries stored in the database.
+   
+   Credentials:
+   - Username: *admin*
+   - Password: *admin*
 
 ### Fraud Detection Model
 

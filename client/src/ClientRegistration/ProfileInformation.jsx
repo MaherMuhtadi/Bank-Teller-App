@@ -9,7 +9,7 @@ function ProfileInformation({ formValues, setFormValues }) {
 
     return (
         <div className="space-y-5">
-            <h3 className="font-bold text-lg italic">Profile Information</h3>
+            <h3 className="font-semibold text-lg">Profile Information</h3>
 
             <div className="flex justify-between space-x-6">
                 <div className="flex flex-col space-y-5 w-1/2">
