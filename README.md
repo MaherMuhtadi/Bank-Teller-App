@@ -2,6 +2,10 @@
 
 A CRM for bank employees to manage clients and accounts, conduct transactions, and detect fraud with machine learning support.
 
+![image](https://github.com/user-attachments/assets/42734e1f-01af-46a9-b8d6-8fea151096a5)
+
+This README is a work in progress.
+
 ## Table of Contents
 
 - [Bank-Teller-App](#bank-teller-app)
